@@ -10,5 +10,6 @@ public class ChanceLib extends JavaPlugin {
 
     public void onEnable() {
         instance = this;
+        //TODO: Plugin's everything
     }
 }
