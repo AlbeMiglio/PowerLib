@@ -1,12 +1,12 @@
-package it.albemiglio.chancelib;
+package it.mycraft.powerlib;
 
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ChanceLib extends JavaPlugin {
+public class PowerLib extends JavaPlugin {
 
     @Getter
-    ChanceLib instance;
+    PowerLib instance;
 
     public void onEnable() {
         instance = this;

@@ -1,4 +1,4 @@
-name: ChanceLib
-author: AlbeMiglio
-main: it.albemiglio.chancelib.ChanceLib
-version: 1.0
+name: PowerLib
+authors: [AlbeMiglio, pompiere1]
+main: it.mycraft.powerlib.PowerLib
+version: ${project.version}
