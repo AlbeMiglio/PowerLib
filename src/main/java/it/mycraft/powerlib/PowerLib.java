@@ -10,11 +10,10 @@ public class PowerLib extends JavaPlugin {
 
     public void onEnable() {
         instance = this;
-        //TODO: Plugin's everything
-        //ConfigAPI.create("Plugin", "config.yml");
-        //FileConfiguration config = ConfigAPI.get("Plugin", "config.yml");
+        //TODO: ConfigAPI.create("Plugin", "config.yml");
+        //TODO: FileConfiguration config = ConfigAPI.get("Plugin", "config.yml");
         //
-        //RandomDraw r = new RandomDraw();
+        // RandomDraw r = new RandomDraw();
         // r.addItem("Venticinquepercento", 25);
         // r.addItem("Settantapercento", 70);
         // r.addItem("cinquepercento", 5);
