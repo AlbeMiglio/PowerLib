@@ -1,7 +1,9 @@
 package it.mycraft.powerlib.inventory;
 
+import it.mycraft.powerlib.item.ItemBuilder;
 import it.mycraft.powerlib.utils.ColorAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -101,6 +103,7 @@ public class InventoryBuilder {
         setRowAndColumnItems(inventory);
         setItems(inventory);
 
+        reset();
         return inventory;
     }
 
@@ -173,4 +176,27 @@ public class InventoryBuilder {
         return inventory;
     }
 
+    /**
+     * This method add a custom value on a placeholder to title of the inventory
+     * @param placeholder The placeholder
+     * @param value The value
+     * @return The InventoryBuilder
+     */
+    public InventoryBuilder addPlaceHolder(String placeholder, Object value) {
+        title = title.replaceAll(placeholder, value.toString());
+
+        return this;
+    }
+
+    /**
+     * This is a security method used in case an instance is used to make many inventories
+     */
+    private void reset() {
+        setItem = new HashMap<>();
+        fillRow = new HashMap<>();
+        fillColumn = new HashMap<>();
+        int size = 9;
+        String title = "null";
+        fillInventory = new ItemBuilder().setMaterial(Material.STONE).build();
+    }
 }
