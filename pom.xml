@@ -6,7 +6,7 @@
 
     <groupId>it.mycraft</groupId>
     <artifactId>PowerLib</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
     <build>
         <plugins>
             <plugin>
@@ -47,6 +47,12 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.25</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.azbh111</groupId>
+            <artifactId>craftbukkit-1.14.3</artifactId>
+            <version>R</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

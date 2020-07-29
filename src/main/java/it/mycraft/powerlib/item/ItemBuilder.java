@@ -2,6 +2,7 @@ package it.mycraft.powerlib.item;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import it.mycraft.powerlib.reflection.ReflectionAPI;
 import it.mycraft.powerlib.utils.ColorAPI;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -26,36 +27,38 @@ public class ItemBuilder {
     private List<String> lore;
     private int amount;
     private short damage;
-
     private boolean glowing;
 
-    public ItemBuilder(){
+    public ItemBuilder() {
         amount = 1;
         damage = 0;
     }
 
     /**
      * This method sets the item material
-     * @param material  The material
+     *
+     * @param material The material
      * @return The ItemBuilder
      */
-    public ItemBuilder setMaterial(Material material){
+    public ItemBuilder setMaterial(Material material) {
         this.material = material;
         return this;
     }
 
     /**
      * This method sets the item material from a string
-     * @param material  The material
+     *
+     * @param material The material
      * @return The ItemBuilder
      */
-    public ItemBuilder setMaterial(String material){
+    public ItemBuilder setMaterial(String material) {
         this.material = Material.valueOf(material);
         return this;
     }
 
     /**
      * This method sets the item name
+     *
      * @param name The name
      * @return The ItemBuilder
      */
@@ -66,46 +69,51 @@ public class ItemBuilder {
 
     /**
      * This method sets the item lore
+     *
      * @param lore The lore
      * @return The ItemBuilder
      */
-    public ItemBuilder setLore(String... lore){
+    public ItemBuilder setLore(String... lore) {
         this.lore = ColorAPI.color(Arrays.asList(lore));
         return this;
     }
 
     /**
      * This method sets the item lore
+     *
      * @param lore The lore
      * @return The ItemBuilder
      */
-    public ItemBuilder setLore(List<String> lore){
+    public ItemBuilder setLore(List<String> lore) {
         this.lore = ColorAPI.color(lore);
         return this;
     }
 
     /**
      * This method sets the item amount
+     *
      * @param amount The amount
      * @return The ItemBuilder
      */
-    public ItemBuilder setAmount(int amount){
+    public ItemBuilder setAmount(int amount) {
         this.amount = amount;
         return this;
     }
 
     /**
-     * This method sets the item damage for old minecraft versions
+     * This method sets the item damage for older minecraft versions
+     *
      * @param damage The damage
      * @return The ItemBuilder
      */
-    public ItemBuilder setDamage(short damage){
+    public ItemBuilder setDamage(short damage) {
         this.damage = damage;
         return this;
     }
 
     /**
-     * This method sets the item glow
+     * This method sets the item glowing
+     *
      * @param glowing True to set item glowing
      * @return The ItemBuilder
      */
@@ -115,23 +123,24 @@ public class ItemBuilder {
     }
 
     /**
-     * This method clone your ItemStack in another ItemBuilder
+     * This method clones your ItemStack in another ItemBuilder
+     *
      * @param itemStack The ItemStack to clone
      * @return The ItemBuilder
      */
-    public ItemBuilder clone(ItemStack itemStack){
+    public ItemBuilder clone(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         material = itemStack.getType();
         amount = itemStack.getAmount();
         damage = itemStack.getDurability();
 
-        if(itemMeta.getDisplayName() != null)
+        if (itemMeta.getDisplayName() != null)
             name = itemMeta.getDisplayName();
 
-        if(itemMeta.hasLore())
+        if (itemMeta.hasLore())
             lore = itemMeta.getLore();
 
-        if(itemMeta.hasEnchants())
+        if (itemMeta.hasEnchants())
             glowing = true;
 
         return this;
@@ -139,22 +148,33 @@ public class ItemBuilder {
 
     /**
      * This method sets a custom skin to a skull
+     *
      * @param itemBuilder The itemBuilder
-     * @param base64 The base64
+     * @param base64      The base64
      * @return The skull with a non-player skin
-     * TODO: Make support for 1.13-1.16 skull
-     * TODO: Make support for Base64 1.14-1.16
      */
     private ItemStack setCustomSkin(ItemBuilder itemBuilder, String base64) {
         String url = "http://textures.minecraft.net/texture/" + base64;
-
-        ItemStack skull = itemBuilder.setMaterial(Material.SKULL_ITEM).setDamage((byte) 3).setAmount(1).setName(name).setLore(lore).build();
+        int version = ReflectionAPI.getNumericalVersion();
+        String material = "SKULL_ITEM";
+        if (version >= 13) {
+            material = "LEGACY_" + material;
+        }
+        ItemStack skull = itemBuilder.setMaterial(material).setDamage((byte) 3).setAmount(1).setName(name).setLore(lore).build();
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        byte[] encodedData = org.apache.commons.codec.binary.Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+        byte[] encodedData = null;
 
+        if (version >= 14) {
+            encodedData = org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64
+                    .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+        }
+        else {
+            encodedData = org.apache.commons.codec.binary.Base64
+                    .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+        }
+        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         Field profileField = null;
         try {
             profileField = skullMeta.getClass().getDeclaredField("profile");
@@ -170,16 +190,22 @@ public class ItemBuilder {
 
     /**
      * This method sets a player skin to a skull
+     *
      * @param itemBuilder The itemBuilder
-     * @param playerName The player name
+     * @param playerName  The player name
      * @return The skull with a player skin
-     * TODO: Make support for 1.13-1.16 skull
      */
     private ItemStack setPlayerSkin(ItemBuilder itemBuilder, String playerName) {
-        ItemStack skull = itemBuilder.setMaterial(Material.SKULL_ITEM).setAmount(1).setDamage((short) 3).setName(name).setLore(lore).build();
+        int version = ReflectionAPI.getNumericalVersion();
+        String material = "SKULL_ITEM";
+        if (version >= 13) {
+            material = "LEGACY_" + material;
+        }
+        ItemStack skull = itemBuilder.setMaterial(material)
+                .setAmount(1).setDamage((short) 3).setName(name).setLore(lore).build();
 
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwner(name);
+        skullMeta.setOwner(playerName);
         skull.setItemMeta(skullMeta);
 
         return skull;
@@ -187,13 +213,14 @@ public class ItemBuilder {
 
     /**
      * This method sets a custom color to a leather armor
-     * @param red The red value
-     * @param green The green value
-     * @param blue The blue value
+     *
+     * @param red         The red value
+     * @param green       The green value
+     * @param blue        The blue value
      * @param itemBuilder The itemBuilder
      * @return The armor with a custom color
      */
-    private ItemStack setColorToArmor(int red, int green, int blue, ItemBuilder itemBuilder){
+    private ItemStack setColorToArmor(int red, int green, int blue, ItemBuilder itemBuilder) {
         ItemStack leatherArmor = itemBuilder.setMaterial(material).setName(name).setLore(lore).build();
 
         LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) leatherArmor.getItemMeta();
@@ -206,15 +233,16 @@ public class ItemBuilder {
 
     /**
      * This method add a custom value on a placeholder to lore and name of the item
+     *
      * @param placeholder The placeholder
-     * @param value The value
+     * @param value       The value
      * @return The ItemBuilder
      */
-    public ItemBuilder addPlaceHolder(String placeholder, Object value){
+    public ItemBuilder addPlaceHolder(String placeholder, Object value) {
         name = name.replaceAll(placeholder, value.toString());
 
         List<String> newLore = new ArrayList<>();
-        for(String s: lore){
+        for (String s : lore) {
             newLore.add(s.replaceAll(placeholder, value.toString()));
         }
         lore = newLore;
@@ -224,15 +252,16 @@ public class ItemBuilder {
 
     /**
      * This method use all datas gived to return the ItemStack
+     *
      * @return The ItemStack
      */
-    public ItemStack build(){
+    public ItemStack build() {
         ItemStack itemStack = new ItemStack(material, amount, damage);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        if(name != null)
+        if (name != null)
             itemMeta.setDisplayName(name);
 
-        if(lore != null)
+        if (lore != null)
             itemMeta.setLore(lore);
 
         if (glowing) {
@@ -247,6 +276,7 @@ public class ItemBuilder {
 
     /**
      * This method use the skin url to make a custom skull
+     *
      * @param skinURL The skin url
      * @return The ItemStack
      */
@@ -256,6 +286,7 @@ public class ItemBuilder {
 
     /**
      * This method use the player name to make a player skull
+     *
      * @param playerName The player name
      * @return The ItemStack
      */
@@ -265,19 +296,20 @@ public class ItemBuilder {
 
     /**
      * This method use color values to sets a custom color to a leather armor
-     * @param red The red value
+     *
+     * @param red   The red value
      * @param green The green value
-     * @param blue The blue value
+     * @param blue  The blue value
      * @return The ItemStack
      */
-    public ItemStack coloredArmorBuild(int red, int green, int blue){
+    public ItemStack coloredArmorBuild(int red, int green, int blue) {
         return setColorToArmor(red, green, blue, this);
     }
 
     /**
      * This is a security method used in case an instance is used to make many items
      */
-    private void reset(){
+    private void reset() {
         material = Material.STONE;
 
         name = "";

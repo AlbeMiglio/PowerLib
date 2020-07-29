@@ -2,10 +2,7 @@ package it.mycraft.powerlib.chance;
 
 import it.mycraft.powerlib.PowerLib;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RandomDraw {
 
@@ -18,6 +15,10 @@ public class RandomDraw {
         this.doubleMap = new HashMap<>();
     }
 
+    /**
+     * @param map A HashMap with the drawing objects as keys and their chances as values
+     * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
+     */
     public RandomDraw(HashMap<Object, Double> map, boolean useDoubleValues) {
         if(useDoubleValues) {
             this.doubleMap = map;
@@ -30,14 +31,29 @@ public class RandomDraw {
         }
     }
 
+    /**
+     * Adds an Item with an integer chance to be extracted
+     * @param obj The object being added to the draw
+     * @param probability  The object's INTEGER chance of being drawn
+     */
     public void addItem(Object obj, Integer probability) {
         this.intMap.put(obj, probability);
     }
 
+    /**
+     * Adds an Item with a decimal chance to be extracted
+     * @param obj The object being added to the draw
+     * @param probability  The object's DECIMAL chance of being drawn
+     */
     public void addItem(Object obj, Double probability) {
         this.doubleMap.put(obj, probability);
     }
 
+    /**
+     * Removes an Item, if present, from the extraction
+     * @param obj The object being removed from the draw
+     * @param isDoubleValue If the map is using decimal numbers (false for integers e.g. 1.0)
+     */
     public void removeItem(Object obj, boolean isDoubleValue) {
         if(isDoubleValue) {
             this.doubleMap.remove(obj);
@@ -45,6 +61,11 @@ public class RandomDraw {
         else this.intMap.remove(obj);
     }
 
+    /**
+     * Sums the chances of all the items of the extraction
+     * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
+     * @return The total probability of the draw
+     */
     public Double getTotalChance(boolean useDoubleValues) {
         double d;
         if(useDoubleValues) {
@@ -56,9 +77,18 @@ public class RandomDraw {
         return d;
     }
 
+    /**
+     * Divides the object's partial probability by the total probability to
+     * @param obj The object whose chance we don't know about
+     * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
+     * @return The related item's chance to be extracted
+     */
     public Double getProbability(Object obj, boolean useDoubleValues) {
         double d;
         double total = this.getTotalChance(useDoubleValues);
+        if(!contains(obj, useDoubleValues)) {
+            return 0.0;
+        }
         if(useDoubleValues) {
             d = this.doubleMap.get(obj) / total;
         }
@@ -68,6 +98,11 @@ public class RandomDraw {
         return d;
     }
 
+    /**
+     * Adds the Map items to a List, shuffles it and extracts randomly an item
+     * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
+     * @return The random-extracted item
+     */
     public Object shuffle(boolean useDoubleValues) {
         List<Object> list = new ArrayList<>();
         if(useDoubleValues) {
@@ -91,6 +126,7 @@ public class RandomDraw {
             }
         }
         int rand = random(1, this.getTotalChance(useDoubleValues).intValue());
+        Collections.shuffle(list);
         return list.indexOf(rand-1);
     }
 
@@ -103,5 +139,9 @@ public class RandomDraw {
     private int random(int min, int max) {
         Random r = new Random();
         return r.nextInt(max + 1 - min) + min;
+    }
+
+    private boolean contains(Object obj, boolean useDoubleValues) {
+        return (useDoubleValues && this.doubleMap.containsKey(obj)) || ((!useDoubleValues) && this.intMap.containsKey(obj));
     }
 }
