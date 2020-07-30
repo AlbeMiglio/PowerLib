@@ -21,8 +21,8 @@ public class ConfigManager {
     }
 
     /**
-     * Gets a config file from the local Map
-     * and creates it if it doesn't exist
+     * Gets a config file from the local Map and creates it if it doesn't exist
+     *
      * @param file The config file name
      * @return The related FileConfiguration
      */
@@ -36,8 +36,8 @@ public class ConfigManager {
     }
 
     /**
-     * Creates a file if it doesn't exist and then
-     * puts it into the local Map
+     * Creates a file if it doesn't exist and then puts it into the local Map
+     *
      * @param file The config file name
      * @return The new file
      */
@@ -50,8 +50,8 @@ public class ConfigManager {
     }
 
     /**
-     * Saves the config file changes and
-     * updates it in the local Map
+     * Saves the config file changes and updates it in the local Map
+     *
      * @param config The saving configuration
      */
     public void save(FileConfiguration config) {
@@ -65,6 +65,7 @@ public class ConfigManager {
 
     /**
      * Reloads a config file
+     *
      * @param file The config file name
      */
     public void reload(String file) {
@@ -86,6 +87,7 @@ public class ConfigManager {
 
     /**
      * Loads a config file
+     *
      * @param file The config file name
      * @return the loaded file
      */
@@ -95,6 +97,7 @@ public class ConfigManager {
 
     /**
      * Puts a config in the local Map
+     *
      * @param config The config file
      */
     private void put(FileConfiguration config) {
@@ -103,7 +106,8 @@ public class ConfigManager {
 
     /**
      * Set a config's defaults
-     * @param file The config file name
+     *
+     * @param file   The config file name
      * @param stream The input stream for the file
      */
     private void setDefaults(String file, InputStream stream) {
@@ -111,10 +115,10 @@ public class ConfigManager {
     }
 
     /**
-     * Creates the file by looking for it inside the jar's resources,
-     * then loads it and puts it in the local Map
+     * Creates the file by looking for it inside the jar's resources, then loads it and puts it in the local Map
+     *
      * @param resourcePath The file name
-     * @param replace Whether the file has to be replaced by the default one although it already exists
+     * @param replace      Whether the file has to be replaced by the default one although it already exists
      */
     private void createYAML(String resourcePath, boolean replace) {
         if (resourcePath != null && !resourcePath.equals("")) {

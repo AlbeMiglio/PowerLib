@@ -16,7 +16,7 @@ public class RandomDraw {
     }
 
     /**
-     * @param map A HashMap with the drawing objects as keys and their chances as values
+     * @param map             A HashMap with the drawing objects as keys and their chances as values
      * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
      */
     public RandomDraw(HashMap<Object, Double> map, boolean useDoubleValues) {
@@ -33,7 +33,8 @@ public class RandomDraw {
 
     /**
      * Adds an Item with an integer chance to be extracted
-     * @param obj The object being added to the draw
+     *
+     * @param obj          The object being added to the draw
      * @param probability  The object's INTEGER chance of being drawn
      */
     public void addItem(Object obj, Integer probability) {
@@ -42,7 +43,8 @@ public class RandomDraw {
 
     /**
      * Adds an Item with a decimal chance to be extracted
-     * @param obj The object being added to the draw
+     *
+     * @param obj          The object being added to the draw
      * @param probability  The object's DECIMAL chance of being drawn
      */
     public void addItem(Object obj, Double probability) {
@@ -51,7 +53,8 @@ public class RandomDraw {
 
     /**
      * Removes an Item, if present, from the extraction
-     * @param obj The object being removed from the draw
+     *
+     * @param obj           The object being removed from the draw
      * @param isDoubleValue If the map is using decimal numbers (false for integers e.g. 1.0)
      */
     public void removeItem(Object obj, boolean isDoubleValue) {
@@ -63,6 +66,7 @@ public class RandomDraw {
 
     /**
      * Sums the chances of all the items of the extraction
+     *
      * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
      * @return The total probability of the draw
      */
@@ -78,8 +82,9 @@ public class RandomDraw {
     }
 
     /**
-     * Divides the object's partial probability by the total probability to
-     * @param obj The object whose chance we don't know about
+     * Divides the object's partial probability by the total probability to get the effective chance
+     *
+     * @param obj             The object whose chance we don't know about
      * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
      * @return The related item's chance to be extracted
      */
@@ -100,6 +105,7 @@ public class RandomDraw {
 
     /**
      * Adds the Map items to a List, shuffles it and extracts randomly an item
+     *
      * @param useDoubleValues If the map is using decimal numbers (false for integers e.g. 1.0)
      * @return The random-extracted item
      */

@@ -9,6 +9,7 @@ public class ColorAPI {
 
     /**
      * Colors a String
+     *
      * @param s The string to color
      * @return The colored string
      */
@@ -18,6 +19,7 @@ public class ColorAPI {
 
     /**
      * Decolors a String
+     *
      * @param s The string to decolor
      * @return The unformatted string
      */
@@ -27,6 +29,7 @@ public class ColorAPI {
 
     /**
      * Colors a List<String>
+     *
      * @param l The list of strings to color
      * @return The colored list
      */

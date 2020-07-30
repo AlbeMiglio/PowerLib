@@ -20,83 +20,90 @@ public class InventoryBuilder {
     private Map<Integer, ItemStack> fillColumn;
     private ItemStack fillInventory;
 
-    public InventoryBuilder(){
+    public InventoryBuilder() {
         setItem = new HashMap<>();
         fillRow = new HashMap<>();
         fillColumn = new HashMap<>();
     }
 
     /**
-     * This method set the rows' number
+     * Sets the rows' number
+     *
      * @param rows Amount of rows
      * @return The InventoryBuilder
      */
-    public InventoryBuilder setRows(int rows){
+    public InventoryBuilder setRows(int rows) {
         this.size = rows * 9;
         return this;
     }
 
     /**
-     * This method set the inventory title
+     * Sets the inventory title
+     *
      * @param title The title
      * @return The InventoryBuilder
      */
-    public InventoryBuilder setTitle(String title){
+    public InventoryBuilder setTitle(String title) {
         this.title = ColorAPI.color(title);
         return this;
     }
 
     /**
-     * This method set an or more items in the inventory
-     * @param slot The slot
+     * Sets an item in the inventory
+     *
+     * @param slot      The slot
      * @param itemStack The item to set
      * @return The InventoryBuilder
      */
-    public InventoryBuilder setItem(Integer slot, ItemStack itemStack){
+    public InventoryBuilder setItem(Integer slot, ItemStack itemStack) {
         this.setItem.put(slot, itemStack);
         return this;
     }
 
     /**
-     * This method set an item into a row
-     * @param row The row
+     * Sets an item in an entire row
+     *
+     * @param row       The row
      * @param itemStack The item to set
      * @return The InventoryBuilder
      */
-    public InventoryBuilder fillRow(Integer row, ItemStack itemStack){
+    public InventoryBuilder fillRow(Integer row, ItemStack itemStack) {
         this.fillRow.put(row, itemStack);
         return this;
     }
 
     /**
-     * This method set an item into a column
-     * @param column The column
+     * Sets an item in an entire column
+     *
+     * @param column    The column
      * @param itemStack The item to set
      * @return The InventoryBuilder
      */
-    public InventoryBuilder fillColumn(Integer column, ItemStack itemStack){
+    public InventoryBuilder fillColumn(Integer column, ItemStack itemStack) {
         this.fillColumn.put(column, itemStack);
         return this;
     }
 
     /**
-     * This method fill all inventory with an item
+     * Sets an item in the entire inventory
+     *
      * @param itemStack The item
      * @return The InventoryBuilder
      */
-    public InventoryBuilder fillInventory(ItemStack itemStack){
+    public InventoryBuilder fillInventory(ItemStack itemStack) {
         this.fillInventory = itemStack;
         return this;
     }
 
     /**
-     * This method use all datas gived to return the Inventory
+     * Builds an Inventory with the itemstacks provided previously
+     *
      * @return The Inventory
      */
     public Inventory build() {
         Inventory inventory = Bukkit.createInventory(null, size, title);
 
-        if(fillInventory != null){
+        if (fillInventory != null) {
             fillInventory(inventory);
         }
 
@@ -108,40 +115,44 @@ public class InventoryBuilder {
     }
 
     /**
-     * This method open the inventory to a player
+     * Opens the built inventory to the player
+     *
      * @param player The player
      */
-    public void open(Player player){
+    public void open(Player player) {
         open(player, this);
     }
 
     /**
-     * This method open the inventory to a player
-     * @param player The player
+     * Opens a built inventory to the player
+     *
+     * @param player           The player
      * @param inventoryBuilder The InventoryBuilder
      */
-    private void open(Player player, InventoryBuilder inventoryBuilder){
+    private void open(Player player, InventoryBuilder inventoryBuilder) {
         player.openInventory(inventoryBuilder.build());
     }
 
     /**
-     * This method fill all inventory with an item
+     * Fills an inventory with an item
+     *
      * @param inventory The inventory
-     * @return The inventory filled
+     * @return The filled inventory
      */
-    private Inventory fillInventory(Inventory inventory){
-        for (int i = 0; i<inventory.getSize(); i++)
+    private Inventory fillInventory(Inventory inventory) {
+        for (int i = 0; i < inventory.getSize(); i++)
             inventory.setItem(i, fillInventory);
         return inventory;
     }
 
     /**
-     * This method fill inventory rows and columns with an item
+     * Fills an inventory's rows and columns
+     *
      * @param inventory The inventory
-     * @return The inventory filled
+     * @return The filled inventory
      */
-    private Inventory setRowAndColumnItems(Inventory inventory){
-        if(fillRow.size() != 0) {
+    private Inventory setRowAndColumnItems(Inventory inventory) {
+        if (fillRow.size() != 0) {
             for (Integer integer : fillRow.keySet()) {
                 int max = (integer * 9) - 1;
                 int min = max - 8;
@@ -150,11 +161,10 @@ public class InventoryBuilder {
                 }
             }
         }
-
-        if(fillColumn.size() != 0) {
+        if (fillColumn.size() != 0) {
             for (Integer integer : fillColumn.keySet()) {
                 for (int i = integer - 1; i < inventory.getSize(); i = i + 9) {
-                    System.out.println( i );
+                    System.out.println(i);
                     inventory.setItem(i, fillColumn.get(integer));
                 }
             }
@@ -163,12 +173,13 @@ public class InventoryBuilder {
     }
 
     /**
-     * This method set an item into inventory
+     * Sets the provided items in an inventory
+     *
      * @param inventory The inventory
      * @return The inventory filled
      */
-    private Inventory setItems(Inventory inventory){
-        if(setItem.size() != 0) {
+    private Inventory setItems(Inventory inventory) {
+        if (setItem.size() != 0) {
             for (Integer integer : setItem.keySet()) {
                 inventory.setItem(integer, setItem.get(integer));
             }
@@ -177,9 +188,10 @@ public class InventoryBuilder {
     }
 
     /**
-     * This method add a custom value on a placeholder to title of the inventory
+     * Adds a custom value on a placeholder to the inventory's title
+     *
      * @param placeholder The placeholder
-     * @param value The value
+     * @param value       The value
      * @return The InventoryBuilder
      */
     public InventoryBuilder addPlaceHolder(String placeholder, Object value) {
@@ -189,7 +201,7 @@ public class InventoryBuilder {
     }
 
     /**
-     * This is a security method used in case an instance is used to make many inventories
+     * Just puts in the InventoryBuilder object its default values
      */
     private void reset() {
         setItem = new HashMap<>();

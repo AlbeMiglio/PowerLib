@@ -35,7 +35,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item material
+     * Sets the item's material
      *
      * @param material The material
      * @return The ItemBuilder
@@ -46,7 +46,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item material from a string
+     * Sets the item's material getting it from a String
      *
      * @param material The material
      * @return The ItemBuilder
@@ -57,7 +57,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item name
+     * Sets the item's custom name
      *
      * @param name The name
      * @return The ItemBuilder
@@ -68,20 +68,20 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item lore
+     * Sets the item's lore Array
      *
-     * @param lore The lore
+     * @param lore The lore array
      * @return The ItemBuilder
      */
     public ItemBuilder setLore(String... lore) {
-        this.lore = ColorAPI.color(Arrays.asList(lore));
+        setLore(Arrays.asList(lore));
         return this;
     }
 
     /**
-     * This method sets the item lore
+     * Sets the item's lore List
      *
-     * @param lore The lore
+     * @param lore The lore list
      * @return The ItemBuilder
      */
     public ItemBuilder setLore(List<String> lore) {
@@ -90,7 +90,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item amount
+     * Sets the item's amount
      *
      * @param amount The amount
      * @return The ItemBuilder
@@ -101,7 +101,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item damage for older minecraft versions
+     * Dets the item's damage (for older Minecraft versions)
      *
      * @param damage The damage
      * @return The ItemBuilder
@@ -112,7 +112,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets the item glowing
+     * Sets the item's glowing
      *
      * @param glowing True to set item glowing
      * @return The ItemBuilder
@@ -123,7 +123,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method clones your ItemStack in another ItemBuilder
+     * Clones another itemstack into the builder and stores its data
      *
      * @param itemStack The ItemStack to clone
      * @return The ItemBuilder
@@ -147,7 +147,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets a custom skin to a skull
+     * Sets a custom skin to a skull
      *
      * @param itemBuilder The itemBuilder
      * @param base64      The base64
@@ -164,7 +164,7 @@ public class ItemBuilder {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        byte[] encodedData = null;
+        byte[] encodedData;
 
         if (version >= 14) {
             encodedData = org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64
@@ -175,7 +175,7 @@ public class ItemBuilder {
                     .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
         }
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-        Field profileField = null;
+        Field profileField;
         try {
             profileField = skullMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
@@ -189,7 +189,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets a player skin to a skull
+     * Sets a player's skin to a skull
      *
      * @param itemBuilder The itemBuilder
      * @param playerName  The player name
@@ -212,7 +212,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method sets a custom color to a leather armor
+     * Sets a custom RGB color to a leather armor
      *
      * @param red         The red value
      * @param green       The green value
@@ -232,7 +232,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method add a custom value on a placeholder to lore and name of the item
+     * Adds a custom value on a placeholder to the item's name and lore
      *
      * @param placeholder The placeholder
      * @param value       The value
@@ -251,7 +251,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method use all datas gived to return the ItemStack
+     * Builds an Itemstack with the data provided previously
      *
      * @return The ItemStack
      */
@@ -275,7 +275,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method use the skin url to make a custom skull
+     * Uses the skin URL to make a custom skull
      *
      * @param skinURL The skin url
      * @return The ItemStack
@@ -285,7 +285,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method use the player name to make a player skull
+     * Uses the player's name to make a player skull
      *
      * @param playerName The player name
      * @return The ItemStack
@@ -295,7 +295,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This method use color values to sets a custom color to a leather armor
+     * Uses RGB color values to set a custom color to a leather armor
      *
      * @param red   The red value
      * @param green The green value
@@ -307,7 +307,7 @@ public class ItemBuilder {
     }
 
     /**
-     * This is a security method used in case an instance is used to make many items
+     * Just puts in the ItemBuilder object its default values
      */
     private void reset() {
         material = Material.STONE;
