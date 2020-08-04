@@ -1,4 +1,4 @@
-# TooManyPerms
+# PowerLib
 [![Build Status](https://travis-ci.com/AlbeMiglio/PowerLib.svg?branch=master)](https://travis-ci.com/AlbeMiglio/PowerLib)
 [![License](https://img.shields.io/badge/license-GNU%20General%20Public%20License%20v3.0-brightgreen)](https://github.com/AlbeMiglio/PowerLib/blob/master/LICENSE)
 ![GitHub All Releases](https://img.shields.io/github/downloads/AlbeMiglio/PowerLib/total?color=brightgreen)
