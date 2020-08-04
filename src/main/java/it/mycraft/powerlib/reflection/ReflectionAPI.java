@@ -1,7 +1,10 @@
 package it.mycraft.powerlib.reflection;
 
+import it.mycraft.powerlib.PowerLib;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+
+import java.util.logging.Level;
 
 public class ReflectionAPI {
 
@@ -24,8 +27,8 @@ public class ReflectionAPI {
     public static Class<?> getNMSClass(String name) {
         try {
             return Class.forName("net.minecraft.server." + version + "." + name);
-        } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " NMS Class", ex);
             return null;
         }
     }
@@ -37,8 +40,8 @@ public class ReflectionAPI {
     public static Class<?> getOBCClass(String name) {
         try {
             return Class.forName("org.bukkit.craftbukkit." + version + "." + name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " OBC Class", ex);
             return null;
         }
     }

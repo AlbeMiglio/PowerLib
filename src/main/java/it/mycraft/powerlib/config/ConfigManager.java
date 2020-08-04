@@ -27,10 +27,9 @@ public class ConfigManager {
      * @return The related FileConfiguration
      */
     public FileConfiguration get(String file) {
-        if(this.configs.containsKey(file)) {
+        if (this.configs.containsKey(file)) {
             return this.configs.get(file);
-        }
-        else {
+        } else {
             return this.create(file);
         }
     }

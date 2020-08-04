@@ -2,8 +2,8 @@ package it.mycraft.powerlib.utils;
 
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ColorAPI {
 
@@ -30,23 +30,20 @@ public class ColorAPI {
     /**
      * Colors a List<String>
      *
-     * @param l The list of strings to color
+     * @param list The list of strings to color
      * @return The colored list
      */
-    public static List<String> color(List<String> l) {
-        List<String> list = new ArrayList<>();
-        l.forEach((line -> list.add(color(line))));
-        return list;
+    public static List<String> color(List<String> list) {
+        return list.stream().map(ColorAPI::color).collect(Collectors.toList());
     }
 
     /**
      * Decolors a List<String>
-     * @param l The list of strings to decolor
+     *
+     * @param list The list of strings to decolor
      * @return The unformatted list
      */
-    public static List<String> decolor(List<String> l) {
-        List<String> list = new ArrayList<>();
-        l.forEach((line -> list.add(decolor(line))));
-        return list;
+    public static List<String> decolor(List<String> list) {
+        return list.stream().map(ColorAPI::decolor).collect(Collectors.toList());
     }
 }

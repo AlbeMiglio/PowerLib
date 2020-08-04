@@ -1,29 +1,26 @@
 package it.mycraft.powerlib.inventory;
 
-import it.mycraft.powerlib.item.ItemBuilder;
 import it.mycraft.powerlib.utils.ColorAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InventoryBuilder {
+
 
     private int size;
     private String title;
     private Map<Integer, ItemStack> setItem;
-    private Map<Integer, ItemStack> fillRow;
-    private Map<Integer, ItemStack> fillColumn;
+    private List<ItemStack> fillChessBorder;
     private ItemStack fillInventory;
+    private ItemStack fillBorder;
 
     public InventoryBuilder() {
         setItem = new HashMap<>();
-        fillRow = new HashMap<>();
-        fillColumn = new HashMap<>();
+        fillChessBorder = new ArrayList<>();
     }
 
     /**
@@ -68,7 +65,7 @@ public class InventoryBuilder {
      * @return The InventoryBuilder
      */
     public InventoryBuilder fillRow(Integer row, ItemStack itemStack) {
-        this.fillRow.put(row, itemStack);
+        setRowAndColumnItems(row, 0, itemStack);
         return this;
     }
 
@@ -80,7 +77,30 @@ public class InventoryBuilder {
      * @return The InventoryBuilder
      */
     public InventoryBuilder fillColumn(Integer column, ItemStack itemStack) {
-        this.fillColumn.put(column, itemStack);
+        setRowAndColumnItems(0, column, itemStack);
+        return this;
+    }
+
+    /**
+     * Fills the inventory's borders with an itemstack
+     *
+     * @param itemStack the item to fill the inventory's borders with
+     * @return The InventoryBuilder
+     */
+    public InventoryBuilder fillBorder(ItemStack itemStack) {
+        this.fillBorder = itemStack;
+        return this;
+    }
+
+    /**
+     * Fills the inventory's borders with two itemstacks in a chess-like style
+     *
+     * @param itemStack1 the one item to fill the inventory's borders with
+     * @param itemStack2 the other item to fill the inventory's borders with
+     * @return The InventoryBuilder
+     */
+    public InventoryBuilder fillChessBorder(ItemStack itemStack1, ItemStack itemStack2) {
+        fillChessBorder.addAll(Arrays.asList(itemStack1, itemStack2));
         return this;
     }
 
@@ -107,8 +127,13 @@ public class InventoryBuilder {
             fillInventory(inventory);
         }
 
-        setRowAndColumnItems(inventory);
         setItems(inventory);
+
+        if (fillBorder != null)
+            fillBorder(inventory);
+
+        if (!fillChessBorder.isEmpty())
+            fillChessBorder(inventory);
 
         reset();
         return inventory;
@@ -146,30 +171,92 @@ public class InventoryBuilder {
     }
 
     /**
-     * Fills an inventory's rows and columns
+     * Fills the inventory's borders with an itemstack
      *
      * @param inventory The inventory
-     * @return The filled inventory
+     * @return The InventoryBuilder
      */
-    private Inventory setRowAndColumnItems(Inventory inventory) {
-        if (fillRow.size() != 0) {
-            for (Integer integer : fillRow.keySet()) {
-                int max = (integer * 9) - 1;
-                int min = max - 8;
-                for (int ignored; min <= max; min++) {
-                    inventory.setItem(min, fillRow.get(integer));
-                }
+    private Inventory fillBorder(Inventory inventory) {
+        for (int i = 1; i <= 2; i++) {
+            int max = i == 2 ? (inventory.getSize() - 1) : (i * 9) - 1;
+            int min = max - 8;
+            System.out.println(max + " max-min " + min);
+            for (int ignored; min <= max; min++) {
+                inventory.setItem(min, fillBorder);
             }
         }
-        if (fillColumn.size() != 0) {
-            for (Integer integer : fillColumn.keySet()) {
-                for (int i = integer - 1; i < inventory.getSize(); i = i + 9) {
-                    System.out.println(i);
-                    inventory.setItem(i, fillColumn.get(integer));
-                }
+
+        for (int i = 1; i < 10; i = i + 8) {
+            for (int j = i - 1; j < inventory.getSize(); j = j + 9) {
+                System.out.println(i);
+                inventory.setItem(j, fillBorder);
             }
         }
         return inventory;
+    }
+
+    /**
+     * Fills the inventory's borders with two itemstacks in a chess-like style
+     *
+     * @param inventory The inventory
+     * @return The InventoryBuilder
+     */
+    private Inventory fillChessBorder(Inventory inventory) {
+        int inventorySize = inventory.getSize();
+        boolean bool = true;
+        ItemStack itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
+        int slot = 0;
+
+        for (int ignored; slot < 9; slot++) {
+            inventory.setItem(slot, itemStack);
+            bool = !bool;
+            itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
+        }
+        if (inventorySize == 9)
+            return inventory;
+
+        int t = ((inventorySize / 9) - 2);
+        for (int j = 0; j < t; j++) {
+            inventory.setItem(slot, itemStack);
+            slot = slot + 8;
+            inventory.setItem(slot, itemStack);
+            slot++;
+            bool = !bool;
+            itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
+        }
+
+        if (t == 5) {
+            bool = !bool;
+            itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
+        }
+
+        slot = inventorySize - 9;
+        for (int ignored = 0; slot < inventorySize; slot++, ignored++) {
+            inventory.setItem(slot, itemStack);
+            bool = !bool;
+            itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
+        }
+
+        return inventory;
+    }
+
+    private void setRowAndColumnItems(int row, int column, ItemStack itemStack) {
+        if (row != 0) {
+            int max = (row * 9) - 1;
+            int min = max - 8;
+            for (int ignored; min <= max; min++) {
+                setItem.put(min, itemStack);
+            }
+        }
+
+        if (column != 0) {
+            int max = (row * 9) - 1;
+            int min = max - 8;
+            for (int i = column - 1; i < size; i = i + 9) {
+                setItem.put(i, itemStack);
+            }
+        }
+
     }
 
     /**
@@ -204,11 +291,11 @@ public class InventoryBuilder {
      * Just puts in the InventoryBuilder object its default values
      */
     private void reset() {
-        setItem = new HashMap<>();
-        fillRow = new HashMap<>();
-        fillColumn = new HashMap<>();
+        setItem = null;
+        fillChessBorder = null;
         int size = 9;
-        String title = "null";
-        fillInventory = new ItemBuilder().setMaterial(Material.STONE).build();
+        String title = null;
+        fillInventory = null;
+        fillBorder = null;
     }
 }

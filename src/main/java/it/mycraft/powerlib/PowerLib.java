@@ -15,9 +15,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 
 /**
- *  PowerLib Official Source code
- *  @authors AlbeMiglio, pompiere1
- *  https://www.github.com/AlbeMiglio/PowerLib
+ * PowerLib Official Source code
+ *
+ * @authors AlbeMiglio, pompiere1
+ * https://www.github.com/AlbeMiglio/PowerLib
  */
 public class PowerLib extends JavaPlugin {
 
