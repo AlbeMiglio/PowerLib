@@ -1,13 +1,11 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.PowerLib;
 import it.mycraft.powerlib.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ExampleConfigManager {
 
-    private PowerLib main = PowerLib.getInstance();
     private ConfigManager cm;
 
     /**
