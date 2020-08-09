@@ -126,9 +126,10 @@ public class RandomDraw {
                 }
             }
         }
-        int rand = random(1, this.getTotalChance(useDoubleValues).intValue());
+        int totalChance = this.getTotalChance(useDoubleValues).intValue();
+        int rand = random(1, totalChance);
         Collections.shuffle(list);
-        return list.indexOf(rand - 1);
+        return list.get(rand - 1);
     }
 
     private int getDoubleDecimals(double d) {
