@@ -7,7 +7,7 @@
 
 ## Importing with Maven
 - To hook this plugin into your project with Maven, you just need to add to your pom.xml the repositories and dependencies below:
-```	
+```
 	<repositories>
 		<repository>
 		    <id>jitpack.io</id>
@@ -18,6 +18,6 @@
 	<dependency>
 	    <groupId>com.github.AlbeMiglio</groupId>
 	    <artifactId>PowerLib</artifactId>
-	    <version>1.0.7</version>
+	    <version>1.0.8</version>
 	</dependency>
 ```
