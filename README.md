@@ -16,7 +16,7 @@
 	</repositories>
 
 	<dependency>
-	    <groupId>com.github.AlbeMiglio</groupId>
+	    <groupId>com.github.AlbeMiglio.PowerLib</groupId>
 	    <artifactId>PowerLib</artifactId>
 	    <version>1.0.8</version>
 	</dependency>

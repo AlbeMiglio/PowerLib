@@ -18,7 +18,7 @@ public class ReflectionAPI {
      * @return the server's numerical version
      */
     @Getter
-    private static int numericalVersion = Integer.parseInt(version.split("_")[2]);
+    private static int numericalVersion = Integer.parseInt(version.split("_")[1]);
 
     /**
      * @param name The path of a 'net.minecraft.server.v1_X_RX.' class
