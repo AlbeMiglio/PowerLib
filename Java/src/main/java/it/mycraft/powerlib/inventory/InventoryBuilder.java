@@ -162,21 +162,18 @@ public class InventoryBuilder {
      * Fills an inventory with an item
      *
      * @param inventory The inventory
-     * @return The filled inventory
      */
-    private Inventory fillInventory(Inventory inventory) {
+    private void fillInventory(Inventory inventory) {
         for (int i = 0; i < inventory.getSize(); i++)
             inventory.setItem(i, fillInventory);
-        return inventory;
     }
 
     /**
      * Fills the inventory's borders with an itemstack
      *
      * @param inventory The inventory
-     * @return The InventoryBuilder
      */
-    private Inventory fillBorder(Inventory inventory) {
+    private void fillBorder(Inventory inventory) {
         for (int i = 1; i <= 2; i++) {
             int max = i == 2 ? (inventory.getSize() - 1) : (i * 9) - 1;
             int min = max - 8;
@@ -192,7 +189,6 @@ public class InventoryBuilder {
                 inventory.setItem(j, fillBorder);
             }
         }
-        return inventory;
     }
 
     /**
@@ -201,7 +197,7 @@ public class InventoryBuilder {
      * @param inventory The inventory
      * @return The InventoryBuilder
      */
-    private Inventory fillChessBorder(Inventory inventory) {
+    private void fillChessBorder(Inventory inventory) {
         int inventorySize = inventory.getSize();
         boolean bool = true;
         ItemStack itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
@@ -213,7 +209,7 @@ public class InventoryBuilder {
             itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
         }
         if (inventorySize == 9)
-            return inventory;
+            return;
 
         int t = ((inventorySize / 9) - 2);
         for (int j = 0; j < t; j++) {
@@ -231,13 +227,11 @@ public class InventoryBuilder {
         }
 
         slot = inventorySize - 9;
-        for (int ignored = 0; slot < inventorySize; slot++, ignored++) {
+        for (int ignored = 0; slot < inventorySize; slot++) {
             inventory.setItem(slot, itemStack);
             bool = !bool;
             itemStack = bool ? fillChessBorder.get(0) : fillChessBorder.get(1);
         }
-
-        return inventory;
     }
 
     private void setRowAndColumnItems(int row, int column, ItemStack itemStack) {
@@ -265,13 +259,12 @@ public class InventoryBuilder {
      * @param inventory The inventory
      * @return The inventory filled
      */
-    private Inventory setItems(Inventory inventory) {
+    private void setItems(Inventory inventory) {
         if (setItem.size() != 0) {
             for (Integer integer : setItem.keySet()) {
                 inventory.setItem(integer, setItem.get(integer));
             }
         }
-        return inventory;
     }
 
     /**

@@ -5,6 +5,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class ExampleMessage {
 
     public void isOp(Player player) {
@@ -24,4 +26,18 @@ public class ExampleMessage {
         new Message("&6Hi console", "&eHow are you?")
                 .send(consoleCommandSender);
     }
+
+    public String getText(){
+        return new Message("&4hi %player")
+                .addPlaceHolder("%player", "Pompiere1")
+                .getText();
+    }
+
+    public void textList(){
+        List<String> s = new Message(getText() ,"I'm fine")
+                .getTextList();
+        s.forEach(System.out::println);
+    }
+
+
 }

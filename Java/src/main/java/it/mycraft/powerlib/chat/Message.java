@@ -2,6 +2,7 @@ package it.mycraft.powerlib.chat;
 
 import it.mycraft.powerlib.utils.ColorAPI;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,16 @@ public class Message {
         messages = newMessages;
 
         return this;
+    }
+
+    @Nullable
+    public String getText(){
+        return message;
+    }
+
+    @Nullable
+    public List<String> getTextList(){
+        return messages;
     }
 
     public void send(CommandSender commandSender) {
