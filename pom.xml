@@ -7,7 +7,7 @@
     <groupId>it.mycraft</groupId>
     <artifactId>PowerLibAPI</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <modules>
         <module>Example</module>
         <module>Java</module>

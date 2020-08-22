@@ -1,6 +1,7 @@
 package it.mycraft.powerlib.chat;
 
 import it.mycraft.powerlib.utils.ColorAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,15 +14,23 @@ public class Message {
     private String message;
     private List<String> messages;
 
+    public Message() {
+        this.message = "";
+        this.messages = new ArrayList<>();
+    }
+
     public Message(String message) {
         this.message = ColorAPI.color(message);
+        this.messages = new ArrayList<>();
     }
 
     public Message(String... messages) {
+        this.message = "";
         this.messages = new ArrayList<>(ColorAPI.color(Arrays.asList(messages)));
     }
 
     public Message(List<String> messages) {
+        this.message = "";
         this.messages = new ArrayList<>(ColorAPI.color(messages));
     }
 
@@ -34,6 +43,14 @@ public class Message {
         messages = newMessages;
 
         return this;
+    }
+
+    public void set(String message) {
+        this.message = message;
+    }
+
+    public void set(List<String> messages) {
+        this.messages = messages;
     }
 
     @Nullable
@@ -54,6 +71,40 @@ public class Message {
 
         reset();
     }
+
+    public void broadcast(String permission) {
+        if(!permission.equalsIgnoreCase("")) {
+            if (messages.isEmpty())
+                Bukkit.broadcastMessage(message);
+            else
+                messages.forEach(Bukkit::broadcastMessage);
+        }
+        else {
+            if (messages.isEmpty())
+                Bukkit.broadcast(message, permission);
+            else
+                messages.forEach((m) -> Bukkit.broadcast(m, permission));
+        }
+    }
+
+    public void color() {
+        if(messages.isEmpty()) {
+            this.message = ColorAPI.color(message);
+        }
+        else this.messages = ColorAPI.color(messages);
+    }
+
+    public void decolor() {
+        if(messages.isEmpty()) {
+            this.message = ColorAPI.decolor(message);
+        }
+        else this.messages = ColorAPI.decolor(messages);
+    }
+
+    public void broadcast() {
+        broadcast("");
+    }
+
 
     private void reset() {
         messages = new ArrayList<>();
