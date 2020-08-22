@@ -15,9 +15,11 @@
 		</repository>
 	</repositories>
 
-	<dependency>
-	    <groupId>com.github.AlbeMiglio.PowerLib</groupId>
-	    <artifactId>PowerLib</artifactId>
-	    <version>1.0.9</version>
-	</dependency>
+	<dependencies>
+	    <dependency>
+            	<groupId>it.albemiglio</groupId>
+            	<artifactId>PowerLib</artifactId>
+            	<version>1.0.9</version>
+            </dependency>
+	</dependencies>
 ```
