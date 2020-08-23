@@ -45,21 +45,25 @@ public class Message {
         return this;
     }
 
-    public void set(String message) {
-        this.message = message;
+    public void setText(String message) {
+        this.message = ColorAPI.color(message);
     }
 
-    public void set(List<String> messages) {
-        this.messages = messages;
+    public void setTextList(List<String> messages) {
+        this.messages = ColorAPI.color(messages);
+    }
+
+    public void setTextList(String... messages) {
+        this.messages = ColorAPI.color(Arrays.asList(messages));
     }
 
     @Nullable
-    public String getText(){
+    public String getText() {
         return message;
     }
 
     @Nullable
-    public List<String> getTextList(){
+    public List<String> getTextList() {
         return messages;
     }
 
@@ -73,38 +77,32 @@ public class Message {
     }
 
     public void broadcast(String permission) {
-        if(!permission.equalsIgnoreCase("")) {
+        if (!permission.equalsIgnoreCase("")) {
             if (messages.isEmpty())
                 Bukkit.broadcastMessage(message);
             else
                 messages.forEach(Bukkit::broadcastMessage);
-        }
-        else {
+        } else {
             if (messages.isEmpty())
                 Bukkit.broadcast(message, permission);
             else
                 messages.forEach((m) -> Bukkit.broadcast(m, permission));
         }
-    }
 
-    public void color() {
-        if(messages.isEmpty()) {
-            this.message = ColorAPI.color(message);
-        }
-        else this.messages = ColorAPI.color(messages);
+        reset();
     }
 
     public void decolor() {
-        if(messages.isEmpty()) {
+        if (messages.isEmpty()) {
             this.message = ColorAPI.decolor(message);
-        }
-        else this.messages = ColorAPI.decolor(messages);
+        } else this.messages = ColorAPI.decolor(messages);
+
+        reset();
     }
 
     public void broadcast() {
         broadcast("");
     }
-
 
     private void reset() {
         messages = new ArrayList<>();
