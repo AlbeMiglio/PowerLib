@@ -39,5 +39,9 @@ public class ExampleMessage {
         s.forEach(System.out::println);
     }
 
-
+    public void setText(){
+        System.out.println(new Message()
+            .set("&5Hello shrek, today is: %day")
+            .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me"));
+    }
 }

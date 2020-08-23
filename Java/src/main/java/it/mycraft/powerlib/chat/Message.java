@@ -45,16 +45,19 @@ public class Message {
         return this;
     }
 
-    public void setText(String message) {
+    public Message set(String message) {
         this.message = ColorAPI.color(message);
+        return this;
     }
 
-    public void setTextList(List<String> messages) {
+    public Message set(List<String> messages) {
         this.messages = ColorAPI.color(messages);
+        return this;
     }
 
-    public void setTextList(String... messages) {
+    public Message set(String... messages) {
         this.messages = ColorAPI.color(Arrays.asList(messages));
+        return this;
     }
 
     @Nullable
@@ -92,12 +95,11 @@ public class Message {
         reset();
     }
 
-    public void decolor() {
+    public Message decolor() {
         if (messages.isEmpty()) {
             this.message = ColorAPI.decolor(message);
         } else this.messages = ColorAPI.decolor(messages);
-
-        reset();
+        return this;
     }
 
     public void broadcast() {
