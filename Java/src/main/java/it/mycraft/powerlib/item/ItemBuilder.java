@@ -66,6 +66,36 @@ public class ItemBuilder {
     }
 
     /**
+     * Sets the item's material getting it from a String
+     *
+     * @param id The ID
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setMaterial(int id) {
+        if(ReflectionAPI.getNumericalVersion() <= 12){
+            this.material = Material.getMaterial(id);
+        }else{
+            this.material = LegacyItemAPI.getMaterial(id);
+        }
+        return this;
+    }
+
+    /**
+     * Sets the item's material getting it from a String
+     *
+     * @param id The ID
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setMaterial(int id, int data) {
+        if(ReflectionAPI.getNumericalVersion() <= 12){
+            this.material = Material.getMaterial(id);
+        }else{
+            this.material = LegacyItemAPI.getMaterial(id, data);
+        }
+        return this;
+    }
+
+    /**
      * Sets the item's custom name
      *
      * @param name The name
