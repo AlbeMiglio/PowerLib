@@ -24,8 +24,8 @@ public class ExampleConfigManager {
         return cm.get("config.yml");
     }
 
-    public void saveConfig(FileConfiguration fc) {
-        cm.save(fc);
+    public void saveConfig(String config, FileConfiguration fc) {
+        cm.save(config, fc);
     }
 
     public void reloadConfig() {

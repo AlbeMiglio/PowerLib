@@ -1,12 +1,8 @@
 package it.mycraft.powerlib.chance;
 
-import it.mycraft.powerlib.PowerLib;
-
 import java.util.*;
 
 public class RandomDraw {
-
-    private static PowerLib main = PowerLib.getInstance();
     private HashMap<Object, Integer> intMap;
     private HashMap<Object, Double> doubleMap;
 

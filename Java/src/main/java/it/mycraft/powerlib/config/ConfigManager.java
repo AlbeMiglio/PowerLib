@@ -38,14 +38,14 @@ public class ConfigManager {
      * Creates a file if it doesn't exist and then puts it into the local Map
      *
      * @param file The config file name
-     * @return The new file
+     * @return     The new file
      */
     public FileConfiguration create(String file) {
         File resourcePath = new File(this.plugin.getDataFolder() + file);
         if (!resourcePath.exists()) {
             createYAML(resourcePath.getName(), false);
         }
-        return this.get(file);
+        return this.configs.get(file);
     }
 
     /**
@@ -53,13 +53,13 @@ public class ConfigManager {
      *
      * @param config The saving configuration
      */
-    public void save(FileConfiguration config) {
+    public void save(String file, FileConfiguration config) {
         try {
-            config.save(config.getName());
+            config.save(file);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        this.put(config);
+        this.put(file, config);
     }
 
     /**
@@ -73,7 +73,7 @@ public class ConfigManager {
         if (stream != null) {
             this.setDefaults(file, stream);
         }
-        this.put(conf);
+        this.put(file, conf);
     }
 
     /**
@@ -81,7 +81,6 @@ public class ConfigManager {
      */
     public void reloadAll() {
         this.configs.keySet().forEach(this::reload);
-
     }
 
     /**
@@ -99,8 +98,8 @@ public class ConfigManager {
      *
      * @param config The config file
      */
-    private void put(FileConfiguration config) {
-        this.configs.put(config.getName(), config);
+    private void put(String file, FileConfiguration config) {
+        this.configs.put(file, config);
     }
 
     /**
@@ -125,7 +124,7 @@ public class ConfigManager {
             InputStream in = this.plugin.getResource(resourcePath);
             if (in == null) {
                 throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " +
-                        (new File(this.plugin.getDataFolder(), resourcePath + ".yml")));
+                        (new File(this.plugin.getDataFolder(), resourcePath)));
             } else {
                 File outFile = new File(this.plugin.getDataFolder(), resourcePath);
                 int lastIndex = resourcePath.lastIndexOf(47);
@@ -154,8 +153,8 @@ public class ConfigManager {
                 }
 
             }
-            FileConfiguration conf = this.load(resourcePath + ".yml");
-            this.put(conf);
+            FileConfiguration conf = this.load(resourcePath);
+            this.put(resourcePath, conf);
         } else {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
