@@ -40,7 +40,8 @@ public class ExampleMessage {
     }
 
     public void setText(){
-        System.out.println(new Message()
+        System.out.println(
+                new Message()
             .set("&5Hello shrek, today is: %day")
             .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me"));
     }

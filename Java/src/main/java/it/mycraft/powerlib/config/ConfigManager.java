@@ -1,12 +1,16 @@
 package it.mycraft.powerlib.config;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginAwareness;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -38,14 +42,24 @@ public class ConfigManager {
      * Creates a file if it doesn't exist and then puts it into the local Map
      *
      * @param file The config file name
-     * @return     The new file
+     * @return The new file
      */
-    public FileConfiguration create(String file) {
-        File resourcePath = new File(this.plugin.getDataFolder() + file);
+    public FileConfiguration create(String file, String source) {
+        File resourcePath = new File(this.plugin.getDataFolder(), file);
         if (!resourcePath.exists()) {
-            createYAML(resourcePath.getName(), false);
+            createYAML(resourcePath.getName(), source, false);
         }
         return this.configs.get(file);
+    }
+
+    /**
+     * Same as #create(String,String) but source name equals to the new one
+     *
+     * @param file The config file name
+     * @return The new file
+     */
+    public FileConfiguration create(String file) {
+        return this.create(file, file);
     }
 
     /**
@@ -66,14 +80,40 @@ public class ConfigManager {
      * Reloads a config file
      *
      * @param file The config file name
+     * @author Original code from JavaPlugin.class
      */
     public void reload(String file) {
         FileConfiguration conf = this.load(file);
-        InputStream stream = this.plugin.getResource(file);
-        if (stream != null) {
-            this.setDefaults(file, stream);
+        InputStream defStream = this.plugin.getResource(file);
+        if (defStream != null) {
+            YamlConfiguration yamlConfig;
+            if (!this.isStrictlyUTF8()) {
+                yamlConfig = new YamlConfiguration();
+                byte[] contents;
+                try {
+                    contents = ByteStreams.toByteArray(defStream);
+                } catch (IOException e) {
+                    this.plugin.getLogger().log(Level.SEVERE, "Unexpected failure reading " + file, e);
+                    return;
+                }
+
+                String text = new String(contents, Charset.defaultCharset());
+                if (!text.equals(new String(contents, Charsets.UTF_8))) {
+                    this.plugin.getLogger().warning("Default system encoding has misread " + file + " from plugin jar");
+                }
+
+                try {
+                    yamlConfig.loadFromString(text);
+                } catch (InvalidConfigurationException e) {
+                    this.plugin.getLogger().log(Level.SEVERE, "Cannot load configuration from jar", e);
+                }
+            } else {
+                yamlConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, Charsets.UTF_8));
+            }
+
+            conf.setDefaults(yamlConfig);
+            this.put(file, conf);
         }
-        this.put(file, conf);
     }
 
     /**
@@ -103,28 +143,20 @@ public class ConfigManager {
     }
 
     /**
-     * Set a config's defaults
-     *
-     * @param file   The config file name
-     * @param stream The input stream for the file
-     */
-    private void setDefaults(String file, InputStream stream) {
-        this.get(file).setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(stream, Charsets.UTF_8)));
-    }
-
-    /**
      * Creates the file by looking for it inside the jar's resources, then loads it and puts it in the local Map
      *
      * @param resourcePath The file name
+     * @param source       The source file name
      * @param replace      Whether the file has to be replaced by the default one although it already exists
+     * @author Original code from JavaPlugin.class
      */
-    private void createYAML(String resourcePath, boolean replace) {
+    private void createYAML(String resourcePath, String source, boolean replace) {
         if (resourcePath != null && !resourcePath.equals("")) {
             resourcePath = resourcePath.replace('\\', '/');
-            InputStream in = this.plugin.getResource(resourcePath);
+            InputStream in = this.plugin.getResource(source);
             if (in == null) {
-                throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " +
-                        (new File(this.plugin.getDataFolder(), resourcePath)));
+                throw new IllegalArgumentException("The embedded resource '" + source + "' cannot be found in " +
+                        (new File(this.plugin.getDataFolder(), source)));
             } else {
                 File outFile = new File(this.plugin.getDataFolder(), resourcePath);
                 int lastIndex = resourcePath.lastIndexOf(47);
@@ -158,6 +190,14 @@ public class ConfigManager {
         } else {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
+    }
+
+    private void createYAML(String resourcePath, boolean replace) {
+        this.createYAML(resourcePath, resourcePath, replace);
+    }
+
+    private boolean isStrictlyUTF8() {
+        return this.plugin.getDescription().getAwareness().contains(PluginAwareness.Flags.UTF8);
     }
 
 }

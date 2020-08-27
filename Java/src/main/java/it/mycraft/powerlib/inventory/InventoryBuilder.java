@@ -177,7 +177,6 @@ public class InventoryBuilder {
         for (int i = 1; i <= 2; i++) {
             int max = i == 2 ? (inventory.getSize() - 1) : (i * 9) - 1;
             int min = max - 8;
-            System.out.println(max + " max-min " + min);
             for (int ignored; min <= max; min++) {
                 inventory.setItem(min, fillBorder);
             }

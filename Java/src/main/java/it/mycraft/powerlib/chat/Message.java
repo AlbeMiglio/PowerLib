@@ -35,10 +35,10 @@ public class Message {
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        message = message.replaceAll(placeholder, value.toString());
+        message = message.replace(placeholder, value.toString());
 
         List<String> newMessages = new ArrayList<>();
-        messages.forEach((s) -> newMessages.add(s.replaceAll(placeholder, value.toString())));
+        messages.forEach((s) -> newMessages.add(s.replace(placeholder, value.toString())));
 
         messages = newMessages;
 

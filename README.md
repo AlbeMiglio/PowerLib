@@ -19,7 +19,7 @@
 	    <dependency>
             	<groupId>it.albemiglio</groupId>
             	<artifactId>PowerLib</artifactId>
-            	<version>1.1.0</version>
+            	<version>1.1.1</version>
             </dependency>
 	</dependencies>
 ```
