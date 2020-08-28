@@ -17,7 +17,7 @@
 
 	<dependencies>
 	    <dependency>
-            	<groupId>it.albemiglio</groupId>
+            	<groupId>it.albemiglio.PowerLib</groupId>
             	<artifactId>PowerLib</artifactId>
             	<version>1.1.1</version>
             </dependency>

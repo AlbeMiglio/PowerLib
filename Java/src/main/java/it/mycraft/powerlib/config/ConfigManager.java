@@ -45,7 +45,7 @@ public class ConfigManager {
      * @return The new file
      */
     public FileConfiguration create(String file, String source) {
-        File resourcePath = new File(this.plugin.getDataFolder(), file);
+        File resourcePath = new File(this.plugin.getDataFolder() + "/" + file);
         if (!resourcePath.exists()) {
             createYAML(resourcePath.getName(), source, false);
         }
@@ -130,7 +130,7 @@ public class ConfigManager {
      * @return the loaded file
      */
     private FileConfiguration load(String file) {
-        return YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder() + file));
+        return YamlConfiguration.loadConfiguration(new File(this.plugin.getDataFolder() + "/" + file));
     }
 
     /**
@@ -156,11 +156,11 @@ public class ConfigManager {
             InputStream in = this.plugin.getResource(source);
             if (in == null) {
                 throw new IllegalArgumentException("The embedded resource '" + source + "' cannot be found in " +
-                        (new File(this.plugin.getDataFolder(), source)));
+                        (new File(this.plugin.getDataFolder() + "/" + source)));
             } else {
-                File outFile = new File(this.plugin.getDataFolder(), resourcePath);
+                File outFile = new File(this.plugin.getDataFolder() + "/" + resourcePath);
                 int lastIndex = resourcePath.lastIndexOf(47);
-                File outDir = new File(this.plugin.getDataFolder(), resourcePath.substring(0, Math.max(lastIndex, 0)));
+                File outDir = new File(this.plugin.getDataFolder() + "/" + resourcePath.substring(0, Math.max(lastIndex, 0)));
                 if (!outDir.exists()) {
                     outDir.mkdirs();
                 }
