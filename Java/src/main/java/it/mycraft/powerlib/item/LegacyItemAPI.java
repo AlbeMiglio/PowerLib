@@ -731,6 +731,7 @@ public enum LegacyItemAPI {
 
     @Getter
     int ID, metadata;
+
     @Nullable
     @Getter
     Material material;
@@ -746,13 +747,18 @@ public enum LegacyItemAPI {
     }
 
     @Nullable
+    public Material toMaterial() {
+        return material;
+    }
+
+    @Nullable
     public static Material getMaterial(String id) {
-        return getMaterials(id);
+        return getRawMaterial(id);
     }
 
     @Nullable
     public static Material getMaterial(int id) {
-        return getMaterials(String.valueOf(id));
+        return getRawMaterial(String.valueOf(id));
     }
 
     @Nullable
@@ -760,21 +766,20 @@ public enum LegacyItemAPI {
         return getMaterial(id + ":" + metadata);
     }
 
-
     @Nullable
     public static Material getMaterial(int id, int metadata) {
         return getMaterial(id + ":" + metadata);
     }
 
-    private static Material getMaterials(String id){
+    private static Material getRawMaterial(String id) {
         if (id.contains(":")) {
             for (LegacyItemAPI oldID : LegacyItemAPI.values()) {
                 if (oldID.getTotalID().equals(id))
                     return oldID.getMaterial();
             }
-        }else {
+        } else {
             for (LegacyItemAPI oldID : LegacyItemAPI.values()) {
-                if (oldID.getID() == Integer.valueOf(id))
+                if (oldID.getID() == Integer.parseInt(id))
                     return oldID.getMaterial();
             }
         }
