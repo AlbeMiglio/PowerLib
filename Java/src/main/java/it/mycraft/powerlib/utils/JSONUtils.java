@@ -1,11 +1,11 @@
 package it.mycraft.powerlib.utils;
 
-import org.json.JSONException;
+
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class JSONUtils {
 
@@ -13,7 +13,7 @@ public class JSONUtils {
         try {
             InputStream is = new URL(url).openStream();
             try {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String s = read(rd);
                 return new JSONObject(s);
             } finally {
@@ -28,13 +28,13 @@ public class JSONUtils {
         try {
             InputStream is = new URL(url).openStream();
             try {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-                String s = read(rd);
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                read(rd);
                 return true;
             } finally {
                 is.close();
             }
-        } catch (JSONException | IOException ignored) {
+        } catch (IOException ignored) {
             return false;
         }
     }
