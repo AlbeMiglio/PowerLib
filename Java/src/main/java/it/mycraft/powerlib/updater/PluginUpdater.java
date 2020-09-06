@@ -63,7 +63,7 @@ public class PluginUpdater {
             JSONObject obj = JSONUtils.getJSON(url);
             this.latestVersion = obj.getString(this.field);
             if(type == SiteType.SPIGOTMC) {
-                this.spigotVersionId = obj.getString("id");
+                this.spigotVersionId = obj.getInt("id")+"";
             }
             return !version.equals(latestVersion);
         }
