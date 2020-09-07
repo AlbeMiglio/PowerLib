@@ -12,17 +12,17 @@ public class ExampleInventoryBuilder {
     public Inventory getInventory() {
         ItemStack bluePane = new ItemBuilder()
                 .setMaterial(Material.STAINED_GLASS_PANE)
-                .setDamage((short) 11)
+                .setMetaData((short) 11)
                 .build();
 
         ItemStack redPane = new ItemBuilder()
                 .setMaterial(Material.STAINED_GLASS_PANE)
-                .setDamage((short) 11)
+                .setMetaData((short) 11)
                 .build();
 
         ItemStack whitePane = new ItemBuilder()
                 .setMaterial(Material.STAINED_GLASS_PANE)
-                .setDamage((short) 11)
+                .setMetaData((short) 11)
                 .build();
 
         return new InventoryBuilder()
@@ -55,7 +55,7 @@ public class ExampleInventoryBuilder {
                 .setTitle("&7Hi %playerDisplayName")
                 .fillInventory(new ItemBuilder()
                         .setMaterial(Material.STAINED_GLASS_PANE)
-                        .setDamage((short) 14)
+                        .setMetaData((short) 14)
                         .build())
                 .fillRow(3, new ItemStack(Material.ICE))
                 .fillColumn(5, new ItemBuilder()
