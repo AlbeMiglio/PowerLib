@@ -15,7 +15,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,12 +36,12 @@ public class ItemBuilder {
     private String name;
     private List<String> lore;
     private int amount;
-    private short damage;
+    private short metadata;
     private boolean glowing;
 
     public ItemBuilder() {
         amount = 1;
-        damage = 0;
+        metadata = 0;
     }
 
     /**
@@ -72,9 +75,9 @@ public class ItemBuilder {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id) {
-        if(ReflectionAPI.getNumericalVersion() <= 12){
+        if (ReflectionAPI.getNumericalVersion() <= 12) {
             this.material = Material.getMaterial(id);
-        }else{
+        } else {
             this.material = LegacyItemAPI.getMaterial(id);
         }
         return this;
@@ -87,9 +90,9 @@ public class ItemBuilder {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id, int data) {
-        if(ReflectionAPI.getNumericalVersion() <= 12){
+        if (ReflectionAPI.getNumericalVersion() <= 12) {
             this.material = Material.getMaterial(id);
-        }else{
+        } else {
             this.material = LegacyItemAPI.getMaterial(id, data);
         }
         return this;
@@ -140,13 +143,13 @@ public class ItemBuilder {
     }
 
     /**
-     * Dets the item's damage (for older Minecraft versions)
+     * Dets the item's metadata (for older Minecraft versions)
      *
-     * @param damage The damage
+     * @param metadata The metadata
      * @return The ItemBuilder
      */
-    public ItemBuilder setDamage(short damage) {
-        this.damage = damage;
+    public ItemBuilder setMetaData(short metadata) {
+        this.metadata = metadata;
         return this;
     }
 
@@ -171,7 +174,7 @@ public class ItemBuilder {
         ItemMeta itemMeta = itemStack.getItemMeta();
         material = itemStack.getType();
         amount = itemStack.getAmount();
-        damage = itemStack.getDurability();
+        metadata = itemStack.getDurability();
 
         if (itemMeta.getDisplayName() != null)
             name = itemMeta.getDisplayName();
@@ -196,7 +199,7 @@ public class ItemBuilder {
         String url = "http://textures.minecraft.net/texture/" + base64;
         int version = ReflectionAPI.getNumericalVersion();
         String material = version >= 13 ? "PLAYER_HEAD" : "SKULL_ITEM";
-        ItemStack skull = itemBuilder.setMaterial(material).setDamage((byte) 3).setAmount(1).setName(name).setLore(lore).build();
+        ItemStack skull = itemBuilder.setMaterial(material).setMetaData((byte) 3).setAmount(1).setName(name).setLore(lore).build();
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -236,7 +239,7 @@ public class ItemBuilder {
         ItemStack skull = itemBuilder
                 .setMaterial(material)
                 .setAmount(1)
-                .setDamage((short) 3)
+                .setMetaData((short) 3)
                 .setName(name)
                 .setLore(lore)
                 .build();
@@ -290,7 +293,7 @@ public class ItemBuilder {
      * @return The ItemStack
      */
     public ItemStack build() {
-        ItemStack itemStack = new ItemStack(material, amount, damage);
+        ItemStack itemStack = new ItemStack(material, amount, metadata);
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (name != null)
             itemMeta.setDisplayName(name);
@@ -341,9 +344,78 @@ public class ItemBuilder {
     }
 
     /**
+     * Build a potion with the data privided
+     *
+     * @param type     The effect type
+     * @param duration The duration measured in ticks
+     * @param level    The amplifier
+     * @return The potion
+     */
+    public ItemStack potionBuild(PotionEffectType type, int duration, int level) {
+        return potionBuild(type, duration, level, true, true, true);
+    }
+
+    /**
+     * Build a potion with the data privided
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @return The potion
+     */
+    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite) {
+        return potionBuild(type, duration, level, overwrite, true, true);
+    }
+
+    /**
+     * Build a potion with the data privided
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @param ambient   The ambient status
+     * @return The potion
+     */
+    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient) {
+        return potionBuild(type, duration, level, overwrite, ambient, true);
+    }
+
+    /**
+     * Build a potion with the data privided
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @param ambient   The ambient status
+     * @param particles The particle status
+     * @return The potion
+     */
+    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient, boolean particles) {
+        ItemStack potion;
+        potion = new ItemBuilder()
+                .setMaterial(373)
+                .setName(name)
+                .setLore(lore)
+                .setAmount(amount)
+                .setMetaData(metadata)
+                .setGlowing(glowing)
+                .build();
+
+        PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        meta.addCustomEffect(new PotionEffect(type, duration, (level - 1), ambient, particles), overwrite);
+        potion.setItemMeta(meta);
+
+        return potion;
+    }
+
+    /**
      * Looks for any item's info in the provided FileConfiguration and builds an ItemStack from it
+     *
      * @param fileConfiguration The file configuration to get the item's info from
-     * @param path The section where the item's info are stored
+     * @param path              The section where the item's info are stored
      * @return The built ItemStack
      */
     public ItemStack fromConfig(FileConfiguration fileConfiguration, String path) {
@@ -351,7 +423,7 @@ public class ItemBuilder {
         String newPath, material = "STONE", name = null;
         List<String> lore = null;
         int amount = 1;
-        short damage = 0;
+        short metadata = 0;
 
         for (String s : fileConfiguration.getConfigurationSection(path).getKeys(false)) {
             switch (s) {
@@ -375,9 +447,9 @@ public class ItemBuilder {
                     newPath = path + ".amount";
                     amount = fileConfiguration.getInt(newPath);
                     break;
-                case "damage":
-                    newPath = path + ".damage";
-                    damage = (short) fileConfiguration.getInt(newPath);
+                case "metadata":
+                    newPath = path + ".metadata";
+                    metadata = (short) fileConfiguration.getInt(newPath);
                     break;
                 case "glowing":
                     newPath = path + ".glowing";
@@ -392,7 +464,7 @@ public class ItemBuilder {
                 .setName(name)
                 .setLore(lore)
                 .setAmount(amount)
-                .setDamage(damage)
+                .setMetaData(metadata)
                 .setGlowing(glowing)
                 .build();
     }
@@ -406,7 +478,7 @@ public class ItemBuilder {
         lore = null;
 
         amount = 1;
-        damage = 0;
+        metadata = 0;
 
         glowing = false;
     }

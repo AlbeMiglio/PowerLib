@@ -15,7 +15,7 @@ public class PluginUpdater {
 
     @Getter
     @Nullable
-    private String spigotVersionId;
+    private long spigotVersionId;
 
     @Getter
     private SiteType type;
@@ -62,8 +62,8 @@ public class PluginUpdater {
         if (JSONUtils.isValidJSON(this.url)) {
             JSONObject obj = JSONUtils.getJSON(url);
             this.latestVersion = obj.getString(this.field);
-            if(type == SiteType.SPIGOTMC) {
-                this.spigotVersionId = obj.getInt("id")+"";
+            if (type == SiteType.SPIGOTMC) {
+                this.spigotVersionId = obj.getLong("id");
             }
             return !version.equals(latestVersion);
         }

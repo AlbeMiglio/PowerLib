@@ -5,6 +5,7 @@ import it.mycraft.powerlib.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class ExampleItemBuilder {
         return new ItemBuilder()
                 .setMaterial(Material.STAINED_GLASS_PANE)
                 .setAmount(100)
-                .setDamage((short) randomDraw.shuffle(false))
+                .setMetaData((short) randomDraw.shuffle(false))
                 .setGlowing(true)
                 .build();
     }
@@ -83,5 +84,12 @@ public class ExampleItemBuilder {
 
     public ItemStack getMelon() {
         return this.melon;
+    }
+
+    public ItemStack getPotion(){
+        return new ItemBuilder()
+                .setMaterial(373)
+                .setName("God help us")
+                .potionBuild(PotionEffectType.HEALTH_BOOST, 30000, 2, true);
     }
 }

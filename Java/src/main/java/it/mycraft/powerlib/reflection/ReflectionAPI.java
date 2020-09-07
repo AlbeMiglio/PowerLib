@@ -24,7 +24,7 @@ public class ReflectionAPI {
 
     /**
      * @param name The path of a 'net.minecraft.server.v1_X_RX.' class
-     * @return     The NMS class object
+     * @return The NMS class object
      */
     public static Class<?> getNMSClass(String name) {
         try {
@@ -37,7 +37,7 @@ public class ReflectionAPI {
 
     /**
      * @param name The path of a 'org.bukkit.craftbukkit.v1_X_RX.' class
-     * @return     The OBC class object
+     * @return The OBC class object
      */
     public static Class<?> getOBCClass(String name) {
         try {
@@ -49,13 +49,27 @@ public class ReflectionAPI {
     }
 
     /**
+     * @param name The path of a 'org.bukkit.' class
+     * @return The Bukkit class object
+     */
+    public static Class<?> getBukkitClass(String name) {
+        try {
+            return Class.forName("org.bukkit." + name);
+        } catch (ClassNotFoundException ex) {
+            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " OBC Class", ex);
+            return null;
+        }
+    }
+
+    /**
      * Sends a custom Title and Subtitle to a player
-     * @param player    The player to display the title to
-     * @param title     The title being sent
-     * @param subtitle  The subtitle being sent
-     * @param fadeIn    The "fade-in" time
-     * @param stay      The "stay" time
-     * @param fadeOut   The "fade-out" time
+     *
+     * @param player   The player to display the title to
+     * @param title    The title being sent
+     * @param subtitle The subtitle being sent
+     * @param fadeIn   The "fade-in" time
+     * @param stay     The "stay" time
+     * @param fadeOut  The "fade-out" time
      */
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         try {
@@ -86,8 +100,9 @@ public class ReflectionAPI {
 
     /**
      * Sends a packet to a certain player
-     * @param player  The player to send the packet to
-     * @param packet  The packet being sent
+     *
+     * @param player The player to send the packet to
+     * @param packet The packet being sent
      */
     public static void sendPacket(Player player, Object packet) {
         try {
