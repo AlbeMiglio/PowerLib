@@ -38,11 +38,13 @@ public class PowerLib extends JavaPlugin implements Listener {
             return;
         }
         if (this.pluginUpdater.needsUpdate()) {
-            Message m = new Message("&c&lYour version of PowerLib is outdated! Click here to update to v{version}!")
+            Message m = new Message("&c&lYour version of PowerLib is outdated!");
+            Message m1 = new Message("&a&nClick here to update to v{version}!")
                     .addPlaceHolder("{version}", this.pluginUpdater.getLatestVersion());
-            TextComponent update = new TextComponent(m.getText());
+            TextComponent update = new TextComponent((m1.getText()));
             update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
                     "https://spigotmc.org/resources/83274/download?version=" + this.pluginUpdater.getSpigotVersionId()));
+            m.send(player);
             player.spigot().sendMessage(update);
         }
     }
