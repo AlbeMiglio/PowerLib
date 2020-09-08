@@ -146,13 +146,15 @@ public enum LegacyPotionAPI {
             return new ItemBuilder()
                     .setMaterial(373)
                     .setMetaData((short) lp.getMetadata())
-                    .potionBuild(lp.getPotionEffectType(), lp.getDuration(), lp.getDuration(), true);
+                    .setPotionEffect(lp.getPotionEffectType(), lp.getDuration(), lp.getDuration(), true)
+                    .build();
 
         return new ItemBuilder()
                 .setMaterial(373)
                 .setName(name + lp.getMinecraftName())
                 .setLore("&1" + lp.getMinecraftName() + " (" + lore + ")")
-                .potionBuild(lp.getPotionEffectType(), lp.getDuration(), lp.getDuration(), true);
+                .setPotionEffect(lp.getPotionEffectType(), lp.getDuration(), lp.getDuration(), true)
+                .build();
     }
 
     /**

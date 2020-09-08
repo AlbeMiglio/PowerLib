@@ -3,6 +3,7 @@ package it.mycraft.powerlibexample;
 import it.mycraft.powerlib.chance.RandomDraw;
 import it.mycraft.powerlib.item.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -37,6 +38,7 @@ public class ExampleItemBuilder {
                 .setLore(lore)
                 .addPlaceHolder("%player", player.getDisplayName())
                 .setGlowing(true)
+                .setEnchantment(Enchantment.DAMAGE_ALL, 10)
                 .build();
     }
 
@@ -90,6 +92,10 @@ public class ExampleItemBuilder {
         return new ItemBuilder()
                 .setMaterial(373)
                 .setName("God help us")
-                .potionBuild(PotionEffectType.HEALTH_BOOST, 30000, 2, true);
+                .setPotionEffect(PotionEffectType.HEALTH_BOOST, 30000, 2, true)
+                .setPotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 141561, 4, true)
+                .setPotionEffect(PotionEffectType.ABSORPTION, 544441, 1, true)
+                .setPotionEffect(PotionEffectType.FIRE_RESISTANCE, 54468, 3, true)
+                .build();
     }
 }

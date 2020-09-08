@@ -21,10 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class ItemBuilder {
@@ -38,8 +35,13 @@ public class ItemBuilder {
     private int amount;
     private short metadata;
     private boolean glowing;
+    private Map<Enchantment, Integer> enchantments;
+    private Map<PotionEffect, Boolean> potion;
 
     public ItemBuilder() {
+        lore = new ArrayList<>();
+        enchantments = new HashMap<>();
+        potion = new HashMap<>();
         amount = 1;
         metadata = 0;
     }
@@ -128,6 +130,75 @@ public class ItemBuilder {
      */
     public ItemBuilder setLore(List<String> lore) {
         this.lore = ColorAPI.color(lore);
+        return this;
+    }
+
+    /**
+     * Sets the item's enchantment
+     *
+     * @param enchantment The enchant
+     * @param level       The level
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setEnchantment(Enchantment enchantment, Integer level) {
+        enchantments.put(enchantment, level);
+        System.out.println(enchantments.size());
+        return this;
+    }
+
+
+    /**
+     * Sets the potion's effect
+     *
+     * @param type     The effect type
+     * @param duration The duration measured in ticks
+     * @param level    The amplifier
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setPotionEffect(PotionEffectType type, int duration, int level) {
+        return setPotionEffect(type, duration, level, true, true, true);
+    }
+
+    /**
+     * Sets the potion's effect
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setPotionEffect(PotionEffectType type, int duration, int level, boolean overwrite) {
+        return setPotionEffect(type, duration, level, overwrite, true, true);
+    }
+
+    /**
+     * Sets the potion's effect
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @param ambient   The ambient status
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setPotionEffect(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient) {
+        return setPotionEffect(type, duration, level, overwrite, ambient, true);
+    }
+
+    /**
+     * Sets the potion's effect
+     *
+     * @param type      The potion effect type to add
+     * @param duration  The duration measured in ticks
+     * @param level     The amplifier
+     * @param overwrite true if any existing effect of the same type should be overwritten
+     * @param ambient   The ambient status
+     * @param particles The particle status
+     * @return The ItemBuilder
+     */
+    public ItemBuilder setPotionEffect(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient, boolean particles) {
+        potion.put(new PotionEffect(type, duration, (level - 1), overwrite, ambient), particles);
         return this;
     }
 
@@ -294,19 +365,41 @@ public class ItemBuilder {
      */
     public ItemStack build() {
         ItemStack itemStack = new ItemStack(material, amount, metadata);
-        ItemMeta itemMeta = itemStack.getItemMeta();
+
+            ItemMeta itemMeta = itemStack.getItemMeta();
+
         if (name != null)
             itemMeta.setDisplayName(name);
 
         if (lore != null)
             itemMeta.setLore(lore);
 
-        if (glowing) {
+        if (glowing && enchantments.isEmpty()) {
             itemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
+        if (!enchantments.isEmpty()) {
+            System.out.println(enchantments.size());
+            for (Enchantment enchantment : enchantments.keySet()) {
+                itemMeta.addEnchant(enchantment, enchantments.get(enchantment), true);
+                System.out.println(itemMeta);
+            }
+        }
+
         itemStack.setItemMeta(itemMeta);
+
+        if (material == Material.POTION && !potion.isEmpty()) {
+            System.out.println("Potion");
+            PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
+            for (PotionEffect potionEffect : potion.keySet()) {
+                potionMeta.addCustomEffect(potionEffect, potion.get(potionEffect));
+            }
+            itemStack.setItemMeta(potionMeta);
+            System.out.println(itemStack.getItemMeta());
+        }
+
+        System.out.println(itemStack.getItemMeta());
         reset();
         return itemStack;
     }
@@ -341,74 +434,6 @@ public class ItemBuilder {
      */
     public ItemStack coloredArmorBuild(int red, int green, int blue) {
         return setColorToArmor(red, green, blue, this);
-    }
-
-    /**
-     * Build a potion with the data privided
-     *
-     * @param type     The effect type
-     * @param duration The duration measured in ticks
-     * @param level    The amplifier
-     * @return The potion
-     */
-    public ItemStack potionBuild(PotionEffectType type, int duration, int level) {
-        return potionBuild(type, duration, level, true, true, true);
-    }
-
-    /**
-     * Build a potion with the data privided
-     *
-     * @param type      The potion effect type to add
-     * @param duration  The duration measured in ticks
-     * @param level     The amplifier
-     * @param overwrite true if any existing effect of the same type should be overwritten
-     * @return The potion
-     */
-    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite) {
-        return potionBuild(type, duration, level, overwrite, true, true);
-    }
-
-    /**
-     * Build a potion with the data privided
-     *
-     * @param type      The potion effect type to add
-     * @param duration  The duration measured in ticks
-     * @param level     The amplifier
-     * @param overwrite true if any existing effect of the same type should be overwritten
-     * @param ambient   The ambient status
-     * @return The potion
-     */
-    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient) {
-        return potionBuild(type, duration, level, overwrite, ambient, true);
-    }
-
-    /**
-     * Build a potion with the data privided
-     *
-     * @param type      The potion effect type to add
-     * @param duration  The duration measured in ticks
-     * @param level     The amplifier
-     * @param overwrite true if any existing effect of the same type should be overwritten
-     * @param ambient   The ambient status
-     * @param particles The particle status
-     * @return The potion
-     */
-    public ItemStack potionBuild(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient, boolean particles) {
-        ItemStack potion;
-        potion = new ItemBuilder()
-                .setMaterial(373)
-                .setName(name)
-                .setLore(lore)
-                .setAmount(amount)
-                .setMetaData(metadata)
-                .setGlowing(glowing)
-                .build();
-
-        PotionMeta meta = (PotionMeta) potion.getItemMeta();
-        meta.addCustomEffect(new PotionEffect(type, duration, (level - 1), ambient, particles), overwrite);
-        potion.setItemMeta(meta);
-
-        return potion;
     }
 
     /**
@@ -475,7 +500,10 @@ public class ItemBuilder {
     private void reset() {
         material = null;
         name = null;
+
         lore = null;
+        enchantments = null;
+        potion = null;
 
         amount = 1;
         metadata = 0;
