@@ -400,7 +400,6 @@ public class ItemBuilder {
         }
 
         System.out.println(itemStack.getItemMeta());
-        reset();
         return itemStack;
     }
 
@@ -497,7 +496,7 @@ public class ItemBuilder {
     /**
      * Just puts in the ItemBuilder object its default values
      */
-    private void reset() {
+    public void clean() {
         material = null;
         name = null;
 

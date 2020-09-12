@@ -23,26 +23,26 @@ public class ExampleMessage {
     }
 
     public void sendListMessages(ConsoleCommandSender consoleCommandSender) {
-        new Message("&6Hi console", "&eHow are you?")
+        new Message("&6Hi Console", "&eHow are you?")
                 .send(consoleCommandSender);
     }
 
-    public String getText(){
-        return new Message("&4hi %player")
-                .addPlaceHolder("%player", "Pompiere1")
+    public String getText() {
+        return new Message("&4Hi %player")
+                .addPlaceHolder("%player", "Pompieregay")
                 .getText();
     }
 
-    public void textList(){
-        List<String> s = new Message(getText() ,"I'm fine")
+    public void textList() {
+        List<String> s = new Message(getText(), "I'm fine")
                 .getTextList();
         s.forEach(System.out::println);
     }
 
-    public void setText(){
+    public void setText() {
         System.out.println(
                 new Message()
-            .set("&5Hello shrek, today is: %day")
-            .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me"));
+                        .set("&5Hello Shrek, today is: %day")
+                        .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me"));
     }
 }
