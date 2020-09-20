@@ -142,7 +142,6 @@ public class ItemBuilder {
      */
     public ItemBuilder setEnchantment(Enchantment enchantment, Integer level) {
         enchantments.put(enchantment, level);
-        System.out.println(enchantments.size());
         return this;
     }
 
@@ -380,26 +379,22 @@ public class ItemBuilder {
         }
 
         if (!enchantments.isEmpty()) {
-            System.out.println(enchantments.size());
             for (Enchantment enchantment : enchantments.keySet()) {
                 itemMeta.addEnchant(enchantment, enchantments.get(enchantment), true);
-                System.out.println(itemMeta);
             }
         }
 
         itemStack.setItemMeta(itemMeta);
 
         if (material == Material.POTION && !potion.isEmpty()) {
-            System.out.println("Potion");
             PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
             for (PotionEffect potionEffect : potion.keySet()) {
                 potionMeta.addCustomEffect(potionEffect, potion.get(potionEffect));
             }
             itemStack.setItemMeta(potionMeta);
-            System.out.println(itemStack.getItemMeta());
         }
 
-        System.out.println(itemStack.getItemMeta());
+        reset();
         return itemStack;
     }
 
@@ -496,7 +491,7 @@ public class ItemBuilder {
     /**
      * Just puts in the ItemBuilder object its default values
      */
-    public void clean() {
+    private void reset() {
         material = null;
         name = null;
 

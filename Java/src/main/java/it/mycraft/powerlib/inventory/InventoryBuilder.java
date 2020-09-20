@@ -184,7 +184,6 @@ public class InventoryBuilder {
 
         for (int i = 1; i < 10; i = i + 8) {
             for (int j = i - 1; j < inventory.getSize(); j = j + 9) {
-                System.out.println(i);
                 inventory.setItem(j, fillBorder);
             }
         }
