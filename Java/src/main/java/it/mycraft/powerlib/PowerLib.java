@@ -23,11 +23,11 @@ public class PowerLib extends JavaPlugin implements Listener {
     @Getter
     private static PowerLib instance;
 
-    private PluginUpdater pluginUpdater;
+    private PluginUpdater updater;
 
     public void onEnable() {
         instance = this;
-        this.pluginUpdater = new PluginUpdater(this).setSpigotURL(83274);
+        this.updater = new PluginUpdater(this).setSpigotURL(83274);
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
@@ -37,13 +37,13 @@ public class PowerLib extends JavaPlugin implements Listener {
         if (!player.isOp() && !player.hasPermission("powerlib.update")) {
             return;
         }
-        if (this.pluginUpdater.needsUpdate()) {
+        if (this.updater.needsUpdate()) {
             Message m = new Message("&c&lYour version of PowerLib is outdated!");
             Message m1 = new Message("&a&nClick here to update to v{version}!")
-                    .addPlaceHolder("{version}", this.pluginUpdater.getLatestVersion());
+                    .addPlaceHolder("{version}", this.updater.getLatestVersion());
             TextComponent update = new TextComponent((m1.getText()));
             update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                    "https://spigotmc.org/resources/83274/download?version=" + this.pluginUpdater.getSpigotVersionId()));
+                    "https://spigotmc.org/resources/83274/download?version=" + this.updater.getSpigotVersionId()));
             m.send(player);
             player.spigot().sendMessage(update);
         }

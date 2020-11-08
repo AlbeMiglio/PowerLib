@@ -49,6 +49,7 @@ public class ConfigManager {
         if (!resourcePath.exists()) {
             createYAML(resourcePath.getName(), source, false);
         }
+        else this.reload(file);
         return this.configs.get(file);
     }
 
@@ -110,7 +111,6 @@ public class ConfigManager {
             } else {
                 yamlConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, Charsets.UTF_8));
             }
-
             conf.setDefaults(yamlConfig);
             this.put(file, conf);
         }
@@ -185,8 +185,7 @@ public class ConfigManager {
                 }
 
             }
-            FileConfiguration conf = this.load(resourcePath);
-            this.put(resourcePath, conf);
+            this.reload(resourcePath);
         } else {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }

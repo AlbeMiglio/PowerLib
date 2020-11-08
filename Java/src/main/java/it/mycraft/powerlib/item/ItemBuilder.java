@@ -333,9 +333,10 @@ public class ItemBuilder {
     private ItemStack setColorToArmor(int red, int green, int blue, ItemBuilder itemBuilder) {
         ItemStack leatherArmor = itemBuilder.setMaterial(material).setName(name).setLore(lore).build();
         LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) leatherArmor.getItemMeta();
-        Color color = Color.fromRGB(red, green, blue);
-
-        leatherArmorMeta.setColor(color);
+        try {
+            Color color = Color.fromRGB(red, green, blue);
+            leatherArmorMeta.setColor(color);
+        } catch(Exception ignored) { }
         leatherArmor.setItemMeta(leatherArmorMeta);
         return leatherArmor;
     }
