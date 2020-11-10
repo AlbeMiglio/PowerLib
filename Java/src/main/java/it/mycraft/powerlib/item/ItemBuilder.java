@@ -78,7 +78,12 @@ public class ItemBuilder {
      */
     public ItemBuilder setMaterial(int id) {
         if (ReflectionAPI.getNumericalVersion() <= 12) {
-            this.material = Material.getMaterial(id);
+            try {
+                this.material = Material.getMaterial(id);
+            }
+            catch(Exception e) {
+                this.material = Material.getMaterial(String.valueOf(id));
+            }
         } else {
             this.material = LegacyItemAPI.getMaterial(id);
         }
