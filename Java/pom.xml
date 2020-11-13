@@ -5,7 +5,7 @@
     <parent>
         <artifactId>PowerLibAPI</artifactId>
         <groupId>it.mycraft</groupId>
-        <version>1.1.7-SNAPSHOT</version>
+        <version>1.1.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -59,12 +59,12 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
