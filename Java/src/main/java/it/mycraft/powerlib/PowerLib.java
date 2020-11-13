@@ -27,7 +27,7 @@ public class PowerLib extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
-        this.updater = new PluginUpdater(this).setSpigotURL(83274);
+        this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
