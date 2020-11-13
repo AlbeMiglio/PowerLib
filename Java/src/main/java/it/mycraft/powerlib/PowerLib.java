@@ -43,7 +43,7 @@ public class PowerLib extends JavaPlugin implements Listener {
                     .addPlaceHolder("{version}", this.updater.getLatestVersion());
             TextComponent update = new TextComponent((m1.getText()));
             update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                    "https://spigotmc.org/resources/83274/download?version=" + this.updater.getSpigotVersionId()));
+                    "https://github.com/AlbeMiglio/PowerLib/releases/latest"));
             m.send(player);
             player.spigot().sendMessage(update);
         }
