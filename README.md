@@ -10,16 +10,16 @@
 ```
 	<repositories>
 		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
+                    <id>codemc-repo</id>
+                    <url>https://repo.codemc.org/repository/maven-public/</url>
+                </repository>
 	</repositories>
 
 	<dependencies>
 	    <dependency>
             	<groupId>it.albemiglio.PowerLib</groupId>
             	<artifactId>PowerLib</artifactId>
-            	<version>1.1.6</version>
+            	<version>1.1.7</version>
             </dependency>
 	</dependencies>
 ```
