@@ -66,11 +66,15 @@ public class ConfigManager {
     /**
      * Saves the config file changes and updates it in the local Map
      *
-     * @param config The saving configuration
+     * @param file The config file name
      */
-    public void save(String file, FileConfiguration config) {
+    public void save(String file) {
+        FileConfiguration config = get(file);
+        if (config == null) {
+            throw new IllegalArgumentException("The specified configuration file doesn't exist!");
+        }
         try {
-            config.save(file);
+            config.save(new File(this.plugin.getDataFolder(), file));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
