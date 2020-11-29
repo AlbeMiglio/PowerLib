@@ -17,9 +17,9 @@
 
 	<dependencies>
 	    <dependency>
-            	<groupId>it.albemiglio.PowerLib</groupId>
-            	<artifactId>PowerLib</artifactId>
-            	<version>1.1.7</version>
-            </dependency>
+  		<groupId>it.mycraft</groupId>
+  		<artifactId>PowerLib</artifactId>
+  		<version>1.1.7</version>
+	    </dependency>
 	</dependencies>
 ```
