@@ -458,7 +458,8 @@ public class ItemBuilder {
                     break;
                 case "material":
                     newPath = path + ".material";
-                    material = legacy ? "LEGACY_" + fileConfiguration.getString(newPath) : fileConfiguration.getString(newPath);
+                    material = legacy ? "LEGACY_" + fileConfiguration.getString(newPath) :
+                            fileConfiguration.getString(newPath);
                     break;
                 case "name":
                     newPath = path + ".name";

@@ -33,19 +33,21 @@ public class PowerLib extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (!player.isOp() && !player.hasPermission("powerlib.update")) {
-            return;
-        }
-        if (this.updater.needsUpdate()) {
-            Message m = new Message("&c&lYour version of PowerLib is outdated!");
-            Message m1 = new Message("&a&nClick here to update to v{version}!")
-                    .addPlaceHolder("{version}", this.updater.getLatestVersion());
-            TextComponent update = new TextComponent((m1.getText()));
-            update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                    "https://github.com/AlbeMiglio/PowerLib/releases/latest"));
-            m.send(player);
-            player.spigot().sendMessage(update);
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            Player player = event.getPlayer();
+            if (!player.isOp() && !player.hasPermission("powerlib.update")) {
+                return;
+            }
+            if (this.updater.needsUpdate()) {
+                Message m = new Message("&c&lYour version of PowerLib is outdated!");
+                Message m1 = new Message("&a&nClick here to update to v{version}!")
+                        .addPlaceHolder("{version}", this.updater.getLatestVersion());
+                TextComponent update = new TextComponent((m1.getText()));
+                update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                        "https://github.com/AlbeMiglio/PowerLib/releases/latest"));
+                m.send(player);
+                player.spigot().sendMessage(update);
+            }
+        });
     }
 }
