@@ -267,11 +267,10 @@ public class ItemBuilder {
      * Sets a custom skin to a skull
      *
      * @param itemBuilder The itemBuilder
-     * @param base64      The base64
+     * @param url The minecraft.net url
      * @return The skull with a non-player skin
      */
-    private ItemStack setCustomSkin(ItemBuilder itemBuilder, String base64) {
-        String url = "http://textures.minecraft.net/texture/" + base64;
+    private ItemStack setCustomSkin(ItemBuilder itemBuilder, String url) {
         int version = ReflectionAPI.getNumericalVersion();
         String material = version >= 13 ? "PLAYER_HEAD" : "SKULL_ITEM";
         ItemStack skull = itemBuilder.setMaterial(material).setMetaData((byte) 3).setAmount(1).setName(name).setLore(lore).build();
@@ -411,7 +410,23 @@ public class ItemBuilder {
      * @return The ItemStack
      */
     public ItemStack customHeadBuild(String skinURL) {
-        return setCustomSkin(this, skinURL);
+        if(!skinURL.endsWith("="))
+            return setCustomSkin(this, "http://textures.minecraft.net/texture/" + skinURL);
+
+        return setCustomSkin(this, base64Decoder(skinURL));
+    }
+
+    /**
+     * This method is used for extracting the minecraft.net link from the base64 text
+     *
+     * @param base64 The base64 text
+     * @return The minecraft.net link
+     * */
+    private String base64Decoder(String base64){
+        byte[] decoded = Base64.getDecoder().decode(base64);
+        String s = new String(decoded);
+
+        return s.replace("\"}}}", "").split(":\"")[1];
     }
 
     /**
