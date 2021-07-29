@@ -1,6 +1,6 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.config.ConfigManager;
+import it.mycraft.powerlib.bukkit.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 

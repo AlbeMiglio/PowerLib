@@ -1,6 +1,6 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.chat.Message;
+import it.mycraft.powerlib.bukkit.chat.Message;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;

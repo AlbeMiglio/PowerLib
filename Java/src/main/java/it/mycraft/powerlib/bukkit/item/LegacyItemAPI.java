@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.item;
+package it.mycraft.powerlib.bukkit.item;
 
 import lombok.Getter;
 import org.bukkit.Material;

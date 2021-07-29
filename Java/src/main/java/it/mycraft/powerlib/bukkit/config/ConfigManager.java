@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.config;
+package it.mycraft.powerlib.bukkit.config;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
@@ -14,6 +14,10 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+/**
+ * @author AlbeMiglio
+ * @version 1.1.8
+ */
 public class ConfigManager {
 
     private HashMap<String, FileConfiguration> configs;

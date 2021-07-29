@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.updater;
+package it.mycraft.powerlib.common.enums;
 
 public enum SiteType {
 

@@ -1,16 +1,17 @@
-package it.mycraft.powerlib;
+package it.mycraft.powerlib.bungee;
 
-import it.mycraft.powerlib.chat.Message;
-import it.mycraft.powerlib.updater.PluginUpdater;
+import it.mycraft.powerlib.bungee.chat.Message;
+import it.mycraft.powerlib.bungee.updater.PluginUpdater;
 import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
+import org.bstats.bungeecord.Metrics;
 
 /**
  * PowerLib Official Source code
@@ -18,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @authors AlbeMiglio, pompiere1
  * https://www.github.com/AlbeMiglio/PowerLib
  */
-public class PowerLib extends JavaPlugin implements Listener {
+public class PowerLib extends Plugin implements Listener {
 
     @Getter
     private static PowerLib instance;
@@ -28,14 +29,15 @@ public class PowerLib extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
         this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
-        Bukkit.getPluginManager().registerEvents(this, this);
+        getProxy().getPluginManager().registerListener(this, this);
+        Metrics metrics = new Metrics(this, 11162);
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            Player player = event.getPlayer();
-            if (!player.isOp() && !player.hasPermission("powerlib.update")) {
+    public void onJoin(ServerConnectedEvent event) {
+        ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
+            ProxiedPlayer player = event.getPlayer();
+            if (!player.hasPermission("powerlib.update")) {
                 return;
             }
             if (this.updater.needsUpdate()) {
@@ -46,7 +48,7 @@ public class PowerLib extends JavaPlugin implements Listener {
                 update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
                         "https://github.com/AlbeMiglio/PowerLib/releases/latest"));
                 m.send(player);
-                player.spigot().sendMessage(update);
+                player.sendMessage(update);
             }
         });
     }

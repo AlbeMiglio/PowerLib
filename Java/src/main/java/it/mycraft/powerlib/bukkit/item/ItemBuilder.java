@@ -1,12 +1,12 @@
-package it.mycraft.powerlib.item;
+package it.mycraft.powerlib.bukkit.item;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import it.mycraft.powerlib.PowerLib;
+import it.mycraft.powerlib.bukkit.PowerLib;
+import it.mycraft.powerlib.common.utils.ColorAPI;
 import it.mycraft.powerlib.reflection.ReflectionAPI;
-import it.mycraft.powerlib.utils.ColorAPI;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

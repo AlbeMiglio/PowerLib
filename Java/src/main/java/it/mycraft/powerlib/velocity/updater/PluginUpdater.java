@@ -1,8 +1,9 @@
-package it.mycraft.powerlib.updater;
+package it.mycraft.powerlib.velocity.updater;
 
-import it.mycraft.powerlib.utils.JSONUtils;
+import it.mycraft.powerlib.common.enums.SiteType;
+import it.mycraft.powerlib.common.utils.JSONUtils;
 import lombok.Getter;
-import org.bukkit.plugin.Plugin;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -10,7 +11,6 @@ public class PluginUpdater {
 
     @Getter
     private String url;
-    private Plugin plugin;
     private String field;
 
     @Getter
@@ -21,12 +21,22 @@ public class PluginUpdater {
     private SiteType type;
 
     @Getter
+    @Setter
+    private String pluginVersion;
+
+    @Getter
     private String latestVersion;
 
-    public PluginUpdater(Plugin plugin) {
-        this.plugin = plugin;
+    public PluginUpdater(String pluginVersion) {
         this.url = "";
         this.latestVersion = "";
+        this.pluginVersion = pluginVersion;
+    }
+
+    public PluginUpdater() {
+        this.url = "";
+        this.latestVersion = "";
+        this.pluginVersion = "";
     }
 
     public PluginUpdater setGitHubURL(String user, String repo) {
@@ -58,10 +68,14 @@ public class PluginUpdater {
     }
 
     public boolean needsUpdate() {
-        String version = this.plugin.getDescription().getVersion();
+        String version = this.pluginVersion;
         if (JSONUtils.isValidJSON(this.url)) {
             JSONObject obj = JSONUtils.getJSON(url);
-            this.latestVersion = obj.getString(this.field);
+            try {
+                this.latestVersion = obj.getString(this.field);
+            } catch(NullPointerException ex) {
+                return false;
+            }
             if (type == SiteType.SPIGOTMC) {
                 this.spigotVersionId = obj.getLong("id");
             }

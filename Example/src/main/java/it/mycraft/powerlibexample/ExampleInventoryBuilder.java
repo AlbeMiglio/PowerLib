@@ -1,7 +1,7 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.inventory.InventoryBuilder;
-import it.mycraft.powerlib.item.ItemBuilder;
+import it.mycraft.powerlib.bukkit.inventory.InventoryBuilder;
+import it.mycraft.powerlib.bukkit.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

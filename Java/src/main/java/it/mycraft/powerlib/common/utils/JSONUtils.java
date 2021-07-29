@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.utils;
+package it.mycraft.powerlib.common.utils;
 
 
 import org.json.JSONObject;

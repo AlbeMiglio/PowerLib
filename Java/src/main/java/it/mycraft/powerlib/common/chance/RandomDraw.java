@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.chance;
+package it.mycraft.powerlib.common.chance;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.item;
+package it.mycraft.powerlib.bukkit.item;
 
 import it.mycraft.powerlib.reflection.ReflectionAPI;
 import lombok.Getter;

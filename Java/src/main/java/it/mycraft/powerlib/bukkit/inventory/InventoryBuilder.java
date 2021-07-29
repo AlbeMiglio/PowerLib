@@ -1,9 +1,10 @@
-package it.mycraft.powerlib.inventory;
+package it.mycraft.powerlib.bukkit.inventory;
 
-import it.mycraft.powerlib.utils.ColorAPI;
+import it.mycraft.powerlib.common.utils.ColorAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -17,10 +18,23 @@ public class InventoryBuilder {
     private List<ItemStack> fillChessBorder;
     private ItemStack fillInventory;
     private ItemStack fillBorder;
+    private InventoryHolder inventoryHolder;
 
     public InventoryBuilder() {
         setItem = new HashMap<>();
         fillChessBorder = new ArrayList<>();
+        inventoryHolder = null;
+    }
+
+    /**
+     * Sets the inventoryholder
+     *
+     * @param holder InventoryHolder obj
+     * @return The InventoryBuilder
+     */
+    public InventoryBuilder setHolder(InventoryHolder holder) {
+        this.inventoryHolder = holder;
+        return this;
     }
 
     /**
@@ -121,7 +135,7 @@ public class InventoryBuilder {
      * @return The Inventory
      */
     public Inventory build() {
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        Inventory inventory = Bukkit.createInventory(inventoryHolder, size, title);
 
         if (fillInventory != null) {
             fillInventory(inventory);

@@ -1,7 +1,7 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.chance.RandomDraw;
-import it.mycraft.powerlib.item.ItemBuilder;
+import it.mycraft.powerlib.bukkit.item.ItemBuilder;
+import it.mycraft.powerlib.common.chance.RandomDraw;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

@@ -1,6 +1,6 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.item.LegacyItemAPI;
+import it.mycraft.powerlib.bukkit.item.LegacyItemAPI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

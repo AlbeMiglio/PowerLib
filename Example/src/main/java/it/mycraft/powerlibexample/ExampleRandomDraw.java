@@ -1,7 +1,7 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.PowerLib;
-import it.mycraft.powerlib.chance.RandomDraw;
+import it.mycraft.powerlib.bukkit.PowerLib;
+import it.mycraft.powerlib.common.chance.RandomDraw;
 
 public class ExampleRandomDraw {
 

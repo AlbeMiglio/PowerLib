@@ -1,6 +1,6 @@
 package it.mycraft.powerlibexample;
 
-import it.mycraft.powerlib.item.LegacyPotionAPI;
+import it.mycraft.powerlib.bukkit.item.LegacyPotionAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

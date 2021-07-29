@@ -1,6 +1,6 @@
 package it.mycraft.powerlib.reflection;
 
-import it.mycraft.powerlib.PowerLib;
+import it.mycraft.powerlib.bukkit.PowerLib;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

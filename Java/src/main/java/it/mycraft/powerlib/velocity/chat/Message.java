@@ -1,8 +1,10 @@
-package it.mycraft.powerlib.chat;
+package it.mycraft.powerlib.velocity.chat;
 
-import it.mycraft.powerlib.utils.ColorAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+import it.mycraft.powerlib.common.utils.ColorAPI;
+import it.mycraft.powerlib.velocity.PowerLib;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -13,8 +15,10 @@ public class Message {
 
     private String message;
     private List<String> messages;
+    private static PowerLib main;
 
     public Message() {
+        main = PowerLib.getInstance();
         this.message = "";
         this.messages = new ArrayList<>();
     }
@@ -70,29 +74,26 @@ public class Message {
         return messages;
     }
 
-    public void send(CommandSender commandSender) {
+    public void send(CommandSource commandSender) {
         if (messages.isEmpty())
-            commandSender.sendMessage(message);
+            commandSender.sendMessage(Component.text(message));
         else
-            messages.forEach(commandSender::sendMessage);
-
-        reset();
+            messages.forEach((m) -> commandSender.sendMessage(Component.text(m)));
     }
 
     public void broadcast(String permission) {
         if (!permission.equalsIgnoreCase("")) {
             if (messages.isEmpty())
-                Bukkit.broadcastMessage(message);
+                 main.getProxy().broadcast((net.kyori.text.Component) Component.text(message));
             else
-                messages.forEach(Bukkit::broadcastMessage);
+                messages.forEach((m) -> main.getProxy().broadcast((net.kyori.text.Component) Component.text(m)));
         } else {
-            if (messages.isEmpty())
-                Bukkit.broadcast(message, permission);
-            else
-                messages.forEach((m) -> Bukkit.broadcast(m, permission));
+            for(Player p : main.getProxy().getAllPlayers()) {
+                if(p.hasPermission(permission)) {
+                    send(p);
+                }
+            }
         }
-
-        reset();
     }
 
     public Message decolor() {
@@ -111,3 +112,4 @@ public class Message {
         message = null;
     }
 }
+

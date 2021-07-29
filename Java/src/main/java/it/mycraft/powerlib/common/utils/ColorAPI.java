@@ -1,11 +1,12 @@
-package it.mycraft.powerlib.utils;
-
-import org.bukkit.ChatColor;
+package it.mycraft.powerlib.common.utils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ColorAPI {
+
+    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '§' + "[0-9A-FK-OR]");
 
     /**
      * Colors a String
@@ -14,7 +15,7 @@ public class ColorAPI {
      * @return The colored string
      */
     public static String color(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return s.replace("&", "§");
     }
 
     /**
@@ -24,7 +25,7 @@ public class ColorAPI {
      * @return The unformatted string
      */
     public static String decolor(String s) {
-        return ChatColor.stripColor(ChatColor.RESET + s);
+        return s == null ? null : STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
     }
 
     /**
