@@ -141,13 +141,13 @@ public class InventoryBuilder {
             fillInventory(inventory);
         }
 
-        setItems(inventory);
-
         if (fillBorder != null)
             fillBorder(inventory);
 
         if (!fillChessBorder.isEmpty())
             fillChessBorder(inventory);
+
+        setItems(inventory);
 
         reset();
         return inventory;
