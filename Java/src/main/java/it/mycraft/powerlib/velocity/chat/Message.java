@@ -82,16 +82,9 @@ public class Message {
     }
 
     public void broadcast(String permission) {
-        if (!permission.equalsIgnoreCase("")) {
-            if (messages.isEmpty())
-                 main.getProxy().broadcast((net.kyori.text.Component) Component.text(message));
-            else
-                messages.forEach((m) -> main.getProxy().broadcast((net.kyori.text.Component) Component.text(m)));
-        } else {
-            for(Player p : main.getProxy().getAllPlayers()) {
-                if(p.hasPermission(permission)) {
-                    send(p);
-                }
+        for(Player p : main.getProxy().getAllPlayers()) {
+            if(permission.equalsIgnoreCase("") || p.hasPermission(permission)) {
+                send(p);
             }
         }
     }
