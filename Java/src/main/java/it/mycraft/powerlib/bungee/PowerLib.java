@@ -1,7 +1,7 @@
 package it.mycraft.powerlib.bungee;
 
-import it.mycraft.powerlib.bungee.chat.Message;
 import it.mycraft.powerlib.bungee.updater.PluginUpdater;
+import it.mycraft.powerlib.common.chat.Message;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;

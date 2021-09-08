@@ -1,7 +1,7 @@
 package it.mycraft.powerlib.bukkit;
 
-import it.mycraft.powerlib.bukkit.chat.Message;
 import it.mycraft.powerlib.bukkit.updater.PluginUpdater;
+import it.mycraft.powerlib.common.chat.Message;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;

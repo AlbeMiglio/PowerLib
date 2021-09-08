@@ -9,7 +9,7 @@ import com.velocitypowered.api.plugin.PluginDescription;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import it.mycraft.powerlib.velocity.chat.Message;
+import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.velocity.updater.PluginUpdater;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0", authors = {"AlbeMiglio", "pompiere1"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-PRE-RELEASE", authors = {"AlbeMiglio", "pompiere1"})
 public class PowerLib {
 
     private ProxyServer proxy;
