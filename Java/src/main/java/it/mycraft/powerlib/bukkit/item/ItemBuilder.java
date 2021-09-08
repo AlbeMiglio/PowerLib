@@ -71,37 +71,25 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the item's material getting it from a String
+     * Sets the item's material getting it from an int ID. 1.13+
      *
      * @param id The ID
-     * @return The ItemBuilder
+     * @return   The ItemBuilder
      */
     public ItemBuilder setMaterial(int id) {
-        if (ReflectionAPI.getNumericalVersion() <= 12) {
-            try {
-                this.material = Material.getMaterial(id);
-            }
-            catch(Exception e) {
-                this.material = Material.getMaterial(String.valueOf(id));
-            }
-        } else {
-            this.material = LegacyItemAPI.getMaterial(id);
-        }
+        this.material = LegacyItemAPI.getMaterial(id);
         return this;
     }
 
     /**
-     * Sets the item's material getting it from a String
+     * Sets the item's material data
      *
-     * @param id The ID
-     * @return The ItemBuilder
+     * @param id   The ID
+     * @param data The Data
+     * @return     The ItemBuilder
      */
     public ItemBuilder setMaterial(int id, int data) {
-        if (ReflectionAPI.getNumericalVersion() <= 12) {
-            this.material = Material.getMaterial(id);
-        } else {
-            this.material = LegacyItemAPI.getMaterial(id, data);
-        }
+        this.material = LegacyItemAPI.getMaterial(id, data);
         return this;
     }
 
@@ -267,7 +255,7 @@ public class ItemBuilder {
      * Sets a custom skin to a skull
      *
      * @param itemBuilder The itemBuilder
-     * @param url The minecraft.net url
+     * @param url         The minecraft.net url
      * @return The skull with a non-player skin
      */
     private ItemStack setCustomSkin(ItemBuilder itemBuilder, String url) {
@@ -340,7 +328,8 @@ public class ItemBuilder {
         try {
             Color color = Color.fromRGB(red, green, blue);
             leatherArmorMeta.setColor(color);
-        } catch(Exception ignored) { }
+        } catch (Exception ignored) {
+        }
         leatherArmor.setItemMeta(leatherArmorMeta);
         return leatherArmor;
     }
@@ -370,7 +359,7 @@ public class ItemBuilder {
     public ItemStack build() {
         ItemStack itemStack = new ItemStack(material, amount, metadata);
 
-            ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (name != null)
             itemMeta.setDisplayName(name);
@@ -410,7 +399,7 @@ public class ItemBuilder {
      * @return The ItemStack
      */
     public ItemStack customHeadBuild(String skinURL) {
-        if(!skinURL.endsWith("="))
+        if (!skinURL.endsWith("="))
             return setCustomSkin(this, "http://textures.minecraft.net/texture/" + skinURL);
 
         return setCustomSkin(this, base64Decoder(skinURL));
@@ -421,8 +410,8 @@ public class ItemBuilder {
      *
      * @param base64 The base64 text
      * @return The minecraft.net link
-     * */
-    private String base64Decoder(String base64){
+     */
+    private String base64Decoder(String base64) {
         byte[] decoded = Base64.getDecoder().decode(base64);
         String s = new String(decoded);
 

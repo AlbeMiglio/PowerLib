@@ -72,8 +72,10 @@ public class ReflectionAPI {
      * @param fadeOut  The "fade-out" time
      */
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        try {
-
+        if(getNumericalVersion() > 16) {
+            player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+        }
+        else try {
             Class<?> PacketPlayOutTitleClass = ReflectionAPI.getNMSClass("PacketPlayOutTitle");
             Class<?> IChatBaseComponentClass = ReflectionAPI.getNMSClass("IChatBaseComponent");
 
