@@ -1,4 +1,4 @@
-package it.mycraft.powerlibexample;
+package it.mycraft.powerlibexample.bukkit;
 
 import it.mycraft.powerlib.reflection.ReflectionAPI;
 import org.bukkit.entity.Player;

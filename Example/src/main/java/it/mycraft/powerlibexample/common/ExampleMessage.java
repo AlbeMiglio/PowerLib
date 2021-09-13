@@ -1,4 +1,4 @@
-package it.mycraft.powerlibexample;
+package it.mycraft.powerlibexample.common;
 
 import it.mycraft.powerlib.common.chat.Message;
 import org.bukkit.command.ConsoleCommandSender;
@@ -11,7 +11,8 @@ public class ExampleMessage {
 
     public void isOp(Player player) {
         if (player.isOp())
-            new Message("&4%player is a Server Operator")
+            new Message("&4%player is a {#ffffff}Server Operator") // {#ffffff} = white!
+                    .hex("{#", "}") // hex 1.16+
                     .addPlaceHolder("%player", player.getName())
                     .send(player);
     }
@@ -43,6 +44,7 @@ public class ExampleMessage {
         System.out.println(
                 new Message()
                         .set("&5Hello Shrek, today is: %day")
-                        .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me"));
+                        .addPlaceHolder("%day", "Somebody once told me the world is gonna roll me")
+                        .getText());
     }
 }

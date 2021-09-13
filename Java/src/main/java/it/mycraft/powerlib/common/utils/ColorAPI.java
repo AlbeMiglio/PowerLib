@@ -22,16 +22,16 @@ public class ColorAPI {
 
     /**
      * Colors a String with RGB Hex colors (1.16+ clients and servers only)
-     * Usage: &# + hex code
+     * Usage: pre + hex code + post
      *
      * @author  Elementeral
-     * @param s The string to color
+     * @param string The string to color
      * @return  The colored string
      */
-    public String hex(String s) {
-        final Pattern hexPattern = Pattern.compile("&#([A-Fa-f0-9]{6})");
-        Matcher matcher = hexPattern.matcher(s);
-        StringBuffer buffer = new StringBuffer(s.length() + 4 * 8);
+    public static String hex(String string, String pre, String post) {
+        final Pattern hexPattern = Pattern.compile(pre+"([A-Fa-f0-9]{6})"+post);
+        Matcher matcher = hexPattern.matcher(string);
+        StringBuffer buffer = new StringBuffer(string.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
             matcher.appendReplacement(buffer, COLOR_CHAR + "x"
@@ -44,13 +44,39 @@ public class ColorAPI {
     }
 
     /**
+     * Colors a String with RGB Hex colors and default hex syntax
+     * Usage: &# + hex code
+     *
+     * @param string The string to color
+     * @return  The colored string
+     */
+    public static String hex(String string) {
+        return hex(string, "&#", "");
+    }
+
+    /**
+     * Colors a StringList with RGB Hex colors (1.16+ clients and servers only)
+     *
+     * @param l The list to color
+     * @return  The colored stringlist
+     */
+    public static List<String> hex(List<String> l, String pre, String post) {
+        return l.stream().map((line -> hex(line, pre, post))).collect(Collectors.toList());
+    }
+
+    public static List<String> hex(List<String> l) {
+        return hex(l, "&#", "");
+    }
+
+    /**
      * Decolors a String
      *
      * @param s The string to decolor
      * @return The unformatted string
      */
     public static String decolor(String s) {
-        return s == null ? null : STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
+        return s == null ? null :
+                STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
     }
 
     /**

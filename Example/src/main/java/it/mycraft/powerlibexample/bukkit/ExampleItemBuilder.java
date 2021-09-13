@@ -1,4 +1,4 @@
-package it.mycraft.powerlibexample;
+package it.mycraft.powerlibexample.bukkit;
 
 import it.mycraft.powerlib.bukkit.item.ItemBuilder;
 import it.mycraft.powerlib.common.chance.RandomDraw;

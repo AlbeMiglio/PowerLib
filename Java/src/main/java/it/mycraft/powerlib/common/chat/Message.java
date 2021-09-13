@@ -134,6 +134,19 @@ public class Message {
         return this;
     }
 
+    public Message hex(String pre, String post) {
+        if(messages.isEmpty()) {
+            this.message = ColorAPI.hex(message, pre, post);
+        }
+        else this.messages = ColorAPI.hex(messages, pre, post);
+        return this;
+    }
+
+    public Message hex() {
+        this.hex("&#", "");
+        return this;
+    }
+
     private void reset() {
         messages = new ArrayList<>();
         message = null;
