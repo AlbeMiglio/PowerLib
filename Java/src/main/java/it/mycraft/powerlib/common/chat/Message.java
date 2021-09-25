@@ -1,11 +1,12 @@
 package it.mycraft.powerlib.common.chat;
 
 import it.mycraft.powerlib.common.utils.ColorAPI;
+import it.mycraft.powerlib.common.utils.ServerAPI;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static it.mycraft.powerlib.common.utils.ServerAPI.*;
 
@@ -71,48 +72,37 @@ public class Message {
     }
 
     public void send(Object commandSender) {
-        if (isUsingBukkit()) {
-            if (messages.isEmpty())
-                ((org.bukkit.command.CommandSender) commandSender).sendMessage(message);
-            else
-                messages.forEach(((org.bukkit.command.CommandSender) commandSender)::sendMessage);
-        } else if (isStrictlyUsingBungee()) {
-            if (messages.isEmpty())
-                ((net.md_5.bungee.api.CommandSender) commandSender).sendMessage(message);
-            else
-                messages.forEach(((net.md_5.bungee.api.CommandSender) commandSender)::sendMessage);
-        } else if (isUsingVelocity()) {
-            if (messages.isEmpty())
-                ((com.velocitypowered.api.command.CommandSource) commandSender)
-                        .sendMessage(net.kyori.adventure.text.Component.text(message));
-            else
-                messages.forEach((m) ->
-                        ((com.velocitypowered.api.command.CommandSource) commandSender)
-                                .sendMessage(net.kyori.adventure.text.Component.text(m)));
+        switch (ServerAPI.getType()) {
+            default:
+                break;
+            case BUKKIT:
+                if (messages.isEmpty())
+                    sendBukkitMessage(commandSender, message);
+                else
+                    messages.forEach((m) -> sendBukkitMessage(commandSender, m));
+                break;
+            case BUNGEECORD:
+                if (messages.isEmpty())
+                    sendBungeeMessage(commandSender, message);
+                else
+                    messages.forEach((m) -> sendBungeeMessage(commandSender, m));
+                break;
+            case VELOCITY:
+                if (messages.isEmpty())
+                    sendVelocityMessage(commandSender, message);
+                else
+                    messages.forEach((m) -> sendVelocityMessage(commandSender, m));
+                break;
         }
     }
 
     public void broadcast(String permission) {
         if (isUsingBukkit()) {
-            for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
-                if (permission.equals("") || p.hasPermission(permission)) {
-                    send(p);
-                }
-            }
+            broadcastBukkit(permission);
         } else if (isStrictlyUsingBungee()) {
-            for (net.md_5.bungee.api.connection.ProxiedPlayer p
-                    : net.md_5.bungee.api.ProxyServer.getInstance().getPlayers()) {
-                if (permission.equals("") || p.hasPermission(permission)) {
-                    send(p);
-                }
-            }
+            broadcastBungee(permission);
         } else if (isUsingVelocity()) {
-            for (com.velocitypowered.api.proxy.Player p
-                    : it.mycraft.powerlib.velocity.PowerLib.getInstance().getProxy().getAllPlayers()) {
-                if (permission.equals("") || p.hasPermission(permission)) {
-                    send(p);
-                }
-            }
+            broadcastVelocity(permission);
         }
     }
 
@@ -135,10 +125,9 @@ public class Message {
     }
 
     public Message hex(String pre, String post) {
-        if(messages.isEmpty()) {
+        if (messages.isEmpty()) {
             this.message = ColorAPI.hex(message, pre, post);
-        }
-        else this.messages = ColorAPI.hex(messages, pre, post);
+        } else this.messages = ColorAPI.hex(messages, pre, post);
         return this;
     }
 
@@ -150,5 +139,106 @@ public class Message {
     private void reset() {
         messages = new ArrayList<>();
         message = null;
+    }
+
+    private void sendBukkitMessage(Object commandSender, String message) {
+        try {
+            Class<?> commandSenderClass = Class.forName("org.bukkit.command.CommandSender");
+            Method sendMessage = commandSenderClass.getDeclaredMethod("sendMessage", String.class);
+            sendMessage.invoke(commandSender, message);
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void broadcastBukkit(String permission) {
+        try {
+            Class<?> bukkitClass = Class.forName("org.bukkit.Bukkit");
+            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
+                if (permission.isEmpty()) {
+                    bukkitClass.getMethod("broadcastMessage", String.class).invoke(null, line);
+                } else bukkitClass.getMethod("broadcast", String.class, String.class)
+                        .invoke(null, line, permission);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void sendBungeeMessage(Object commandSender, String message) {
+        try {
+            Class<?> commandSenderClass = Class.forName("net.md_5.bungee.api.CommandSender");
+            Method sendMessage = commandSenderClass.getMethod("sendMessage", String.class);
+            sendMessage.invoke(commandSender, message);
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void broadcastBungee(String permission) {
+        try {
+            Class<?> proxiedPlayerClass = Class.forName("net.md_5.bungee.api.connection.ProxiedPlayer");
+            Class<?> proxyServerClass = Class.forName("net.md_5.bungee.api.ProxyServer");
+            Object proxyServer = proxyServerClass.getMethod("getInstance").invoke(null);
+            Collection<Object> onlinePlayers = (Collection<Object>) proxyServerClass
+                    .getMethod("getPlayers").invoke(proxyServer);
+            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
+                if (permission.isEmpty()) {
+                    for (Object proxiedPlayer : onlinePlayers) {
+                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
+                    }
+                } else for (Object proxiedPlayer : onlinePlayers) {
+                    if ((boolean) proxiedPlayerClass.getMethod("hasPermission", String.class)
+                            .invoke(proxiedPlayer, permission)) {
+                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void sendVelocityMessage(Object commandSender, String message) {
+        try {
+            Class<?> commandSenderClass = Class.forName("com.velocitypowered.api.command.CommandSource");
+            Class<?> componentClass = Class.forName("net.kyori.adventure.text.Component");
+            final Object component = componentClass.getMethod("text", String.class).invoke(null, message);
+            commandSenderClass.getMethod("sendMessage", componentClass).invoke(commandSender, component);
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void broadcastVelocity(String permission) {
+        try {
+            Class<?> proxiedPlayerClass = Class.forName("com.velocitypowered.api.proxy.Player");
+            Class<?> proxyServerClass = Class.forName("com.velocitypowered.api.proxy.ProxyServer");
+            Class<?> powerlibClass = Class.forName("it.mycraft.powerlib.velocity.PowerLib");
+            Object powerlib = powerlibClass.getMethod("getInstance").invoke(null);
+            Object proxyServer = powerlibClass.getMethod("getProxy").invoke(powerlib);
+            Collection<Object> onlinePlayers = (Collection<Object>) proxyServerClass
+                    .getMethod("getAllPlayers").invoke(proxyServer);
+            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
+                if (permission.isEmpty()) {
+                    for (Object proxiedPlayer : onlinePlayers) {
+                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
+                    }
+                } else for (Object proxiedPlayer : onlinePlayers) {
+                    if ((boolean) proxiedPlayerClass.getMethod("hasPermission", String.class)
+                            .invoke(proxiedPlayer, permission)) {
+                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
     }
 }

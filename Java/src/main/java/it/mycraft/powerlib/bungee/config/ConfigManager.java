@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-PRE-RELEASE
+ * @version 1.2.0-TEST-2
  */
 public class ConfigManager {
 
@@ -93,7 +93,7 @@ public class ConfigManager {
      */
     public void reload(String file) {
         if (!this.configs.containsKey(file)) {
-            create(file);
+            createYAML(file, false);
         }
         Configuration conf = this.load(file);
         this.put(file, conf);

@@ -36,6 +36,19 @@ public class ReflectionAPI {
     }
 
     /**
+     * @param name The path of a generic class
+     * @return The class object
+     */
+    public static Class<?> getClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException ex) {
+            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " Class", ex);
+            return null;
+        }
+    }
+
+    /**
      * @param name The path of a 'org.bukkit.craftbukkit.v1_X_RX.' class
      * @return The OBC class object
      */
@@ -56,7 +69,7 @@ public class ReflectionAPI {
         try {
             return Class.forName("org.bukkit." + name);
         } catch (ClassNotFoundException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " OBC Class", ex);
+            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " BC Class", ex);
             return null;
         }
     }
@@ -116,5 +129,4 @@ public class ReflectionAPI {
             e.printStackTrace();
         }
     }
-
 }

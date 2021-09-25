@@ -20,9 +20,10 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-PRE-RELEASE", authors = {"AlbeMiglio", "pompiere1"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-TEST-2", authors = {"AlbeMiglio", "pompiere1"})
 public class PowerLib {
 
+    @Getter
     private ProxyServer proxy;
     private Logger logger;
     private Metrics.Factory metricsFactory;

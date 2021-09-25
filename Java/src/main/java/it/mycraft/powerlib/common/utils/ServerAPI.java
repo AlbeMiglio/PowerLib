@@ -2,6 +2,19 @@ package it.mycraft.powerlib.common.utils;
 
 public class ServerAPI {
 
+    public static ServerType getType() {
+        if (isUsingBukkit()) {
+            return ServerType.BUKKIT;
+        }
+        else if (isStrictlyUsingBungee()) {
+            return ServerType.BUNGEECORD;
+        }
+        else if (isUsingVelocity()) {
+            return ServerType.VELOCITY;
+        }
+        else return ServerType.OTHER;
+    }
+
     public static boolean isUsingBukkit() {
         try {
             Class.forName("org.bukkit.Bukkit");
