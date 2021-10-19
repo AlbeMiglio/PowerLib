@@ -1,5 +1,6 @@
 package it.mycraft.powerlib.velocity.config;
 
+import com.velocitypowered.api.plugin.Plugin;
 import it.mycraft.powerlib.configuration.Configuration;
 import it.mycraft.powerlib.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.configuration.YamlConfiguration;
@@ -7,24 +8,34 @@ import it.mycraft.powerlib.configuration.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-2
+ * @version 1.2.0-TEST-3
  */
 public class ConfigManager {
 
     private HashMap<String, Configuration> configs;
+    private Plugin plugin;
     private File folder;
 
-    public ConfigManager(File pluginFolder) {
+    public ConfigManager(Plugin plugin) {
         this.configs = new HashMap<>();
-        this.folder = pluginFolder;
-        if (!folder.exists()) {
-            folder.mkdir();
+        this.plugin = plugin;
+        try {
+            this.folder = new File(Plugin.class.getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()+ "/plugins/"+plugin.id());
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+        }
+        catch(URISyntaxException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -50,8 +61,9 @@ public class ConfigManager {
      */
     public Configuration create(String file, String source) {
         File resourcePath = new File(folder + "/" + file);
+        System.out.println("file resource: "+resourcePath);
         if (!resourcePath.exists()) {
-            createYAML(resourcePath.getName(), source, false);
+            createYAML(resourcePath, source, false);
         } else this.reload(file);
         return this.configs.get(file);
     }
@@ -93,7 +105,7 @@ public class ConfigManager {
      */
     public void reload(String file) {
         if (!this.configs.containsKey(file)) {
-            createYAML(file, false);
+            createYAML(new File(this.folder + "/" + file), false);
         }
         Configuration conf = this.load(file);
         this.put(file, conf);
@@ -134,14 +146,14 @@ public class ConfigManager {
     /**
      * Creates the file by looking for it inside the jar's resources, then loads it and puts it in the local Map
      *
-     * @param resourcePath The file name
+     * @param file The file name
      * @param source       The source file name
      * @param replace      Whether the file has to be replaced by the default one although it already exists
      * @author Original code from JavaPlugin.class
      */
-    private void createYAML(String resourcePath, String source, boolean replace) {
+    private void createYAML(File file, String source, boolean replace) {
         try {
-            File file = new File(folder, resourcePath);
+            System.out.println("resourcepath: " + file.getName() + " - source: "+source);
             if (!file.exists()) {
                 if (replace) {
                     Files.copy(getResourceAsStream(source),
@@ -153,12 +165,15 @@ public class ConfigManager {
         }
     }
 
-    private void createYAML(String resourcePath, boolean replace) {
-        this.createYAML(resourcePath, resourcePath, replace);
+    private void createYAML(File resourcePath, boolean replace) {
+        this.createYAML(resourcePath, resourcePath.getName(), replace);
     }
 
     private InputStream getResourceAsStream(String name) {
-        return this.getClass().getClassLoader().getResourceAsStream(name);
+        System.out.println("file to get stream: "+new File(name).getPath());
+        URL url = this.getClass().getResource("");
+        System.out.println("url vuoto: "+ url.getFile());
+        return this.plugin.getClass().getResourceAsStream(url.getPath());
     }
 
 }

@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-2
+ * @version 1.2.0-TEST-3
  */
 public class ConfigManager {
 
