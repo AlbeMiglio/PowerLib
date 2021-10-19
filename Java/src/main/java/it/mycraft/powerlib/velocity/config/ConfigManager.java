@@ -1,9 +1,11 @@
 package it.mycraft.powerlib.velocity.config;
 
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginDescription;
 import it.mycraft.powerlib.configuration.Configuration;
 import it.mycraft.powerlib.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.configuration.YamlConfiguration;
+import it.mycraft.powerlib.velocity.PowerLib;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,23 +18,28 @@ import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-3
+ * @version 1.2.0-TEST-4
  */
 public class ConfigManager {
 
     private HashMap<String, Configuration> configs;
-    private Plugin plugin;
+    private PluginDescription pluginDescription;
+    private Object plugin;
     private File folder;
 
-    public ConfigManager(Plugin plugin) {
+    public ConfigManager(PluginDescription pluginDescription) {
         this.configs = new HashMap<>();
-        this.plugin = plugin;
+        this.pluginDescription = pluginDescription;
+        this.plugin = PowerLib.getInstance().getProxy().getPluginManager()
+                .getPlugin(this.pluginDescription.getId()).get().getInstance().get();
         try {
             this.folder = new File(Plugin.class.getProtectionDomain().getCodeSource().getLocation()
-                    .toURI()+ "/plugins/"+plugin.id());
+                    .toURI()+ "/plugins/"+this.pluginDescription.getId());
             if (!folder.exists()) {
                 folder.mkdir();
             }
+            System.out.println(pluginDescription.getSource().get());
+            System.out.println(folder);
         }
         catch(URISyntaxException ex) {
             ex.printStackTrace();
@@ -173,9 +180,8 @@ public class ConfigManager {
         System.out.println("file to get stream: "+new File(name).getPath());
         URL url = this.getClass().getResource("");
         System.out.println("url vuoto: "+ url.getFile());
-        return this.plugin.getClass().getResourceAsStream(url.getPath());
+        return this.plugin.getClass().getResourceAsStream(name);
     }
-
 }
 
 
