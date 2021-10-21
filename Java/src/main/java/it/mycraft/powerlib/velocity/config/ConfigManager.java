@@ -5,20 +5,18 @@ import com.velocitypowered.api.plugin.PluginDescription;
 import it.mycraft.powerlib.configuration.Configuration;
 import it.mycraft.powerlib.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.configuration.YamlConfiguration;
-import it.mycraft.powerlib.velocity.PowerLib;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-4
+ * @version 1.2.0-TEST-5
  */
 public class ConfigManager {
 
@@ -26,20 +24,20 @@ public class ConfigManager {
     private PluginDescription pluginDescription;
     private Object plugin;
     private File folder;
+    private File serverJar;
+    private File pluginJar;
 
-    public ConfigManager(PluginDescription pluginDescription) {
+    public ConfigManager(Object plugin, PluginDescription pluginDescription) {
         this.configs = new HashMap<>();
         this.pluginDescription = pluginDescription;
-        this.plugin = PowerLib.getInstance().getProxy().getPluginManager()
-                .getPlugin(this.pluginDescription.getId()).get().getInstance().get();
+        this.plugin = plugin;
         try {
-            this.folder = new File(Plugin.class.getProtectionDomain().getCodeSource().getLocation()
-                    .toURI()+ "/plugins/"+this.pluginDescription.getId());
+            serverJar = new File(Plugin.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            pluginJar = new File(serverJar.getParentFile(), pluginDescription.getSource().get().toString());
+            folder = new File(serverJar.getParentFile() + "/plugins/"+this.pluginDescription.getId());
             if (!folder.exists()) {
                 folder.mkdir();
             }
-            System.out.println(pluginDescription.getSource().get());
-            System.out.println(folder);
         }
         catch(URISyntaxException ex) {
             ex.printStackTrace();
@@ -68,7 +66,6 @@ public class ConfigManager {
      */
     public Configuration create(String file, String source) {
         File resourcePath = new File(folder + "/" + file);
-        System.out.println("file resource: "+resourcePath);
         if (!resourcePath.exists()) {
             createYAML(resourcePath, source, false);
         } else this.reload(file);
@@ -160,7 +157,6 @@ public class ConfigManager {
      */
     private void createYAML(File file, String source, boolean replace) {
         try {
-            System.out.println("resourcepath: " + file.getName() + " - source: "+source);
             if (!file.exists()) {
                 if (replace) {
                     Files.copy(getResourceAsStream(source),
@@ -177,10 +173,11 @@ public class ConfigManager {
     }
 
     private InputStream getResourceAsStream(String name) {
-        System.out.println("file to get stream: "+new File(name).getPath());
-        URL url = this.getClass().getResource("");
-        System.out.println("url vuoto: "+ url.getFile());
-        return this.plugin.getClass().getResourceAsStream(name);
+        File file = new File(pluginJar + "/" + name);
+        System.out.println("file to get stream: "+file);
+        System.out.println("classloader 1: "+ this.plugin.getClass().getClassLoader());
+        System.out.println("classloader 2: "+ ClassLoader.getSystemClassLoader());
+        return this.plugin.getClass().getClassLoader().getResourceAsStream(file.getPath());
     }
 }
 
