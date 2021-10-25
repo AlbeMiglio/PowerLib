@@ -45,17 +45,14 @@ public class ConfigManager {
     }
 
     /**
-     * Gets a config file from the local Map and creates it if it doesn't exist
+     * Gets a config file from the local Map
+     * Returns NULL if the config file isn't inside the map!
      *
      * @param file The config file name
      * @return The related FileConfiguration
      */
     public Configuration get(String file) {
-        if (this.configs.containsKey(file)) {
-            return this.configs.get(file);
-        } else {
-            return this.create(file);
-        }
+        return this.configs.getOrDefault(file, null);
     }
 
     /**
@@ -64,10 +61,10 @@ public class ConfigManager {
      * @param file The config file name
      * @return The new file
      */
-    public Configuration create(String file, String source) {
+    public Configuration create(String file, InputStream source) {
         File resourcePath = new File(folder + "/" + file);
         if (!resourcePath.exists()) {
-            createYAML(resourcePath, source, false);
+            createYAML(file, source, false);
         } else this.reload(file);
         return this.configs.get(file);
     }
@@ -78,9 +75,9 @@ public class ConfigManager {
      * @param file The config file name
      * @return The new file
      */
-    public Configuration create(String file) {
-        return this.create(file, file);
-    }
+    //public Configuration create(String file) {
+    //    return this.create(file, file);
+    //}
 
     /**
      * Saves the config file changes and updates it in the local Map
@@ -109,7 +106,7 @@ public class ConfigManager {
      */
     public void reload(String file) {
         if (!this.configs.containsKey(file)) {
-            createYAML(new File(this.folder + "/" + file), false);
+            createYAML(file, false);
         }
         Configuration conf = this.load(file);
         this.put(file, conf);
@@ -150,13 +147,14 @@ public class ConfigManager {
     /**
      * Creates the file by looking for it inside the jar's resources, then loads it and puts it in the local Map
      *
-     * @param file The file name
+     * @param resourcePath The file name
      * @param source       The source file name
      * @param replace      Whether the file has to be replaced by the default one although it already exists
      * @author Original code from JavaPlugin.class
      */
-    private void createYAML(File file, String source, boolean replace) {
+    private void createYAML(String resourcePath, String source, boolean replace) {
         try {
+            File file = new File(folder + "/" + resourcePath);
             if (!file.exists()) {
                 if (replace) {
                     Files.copy(getResourceAsStream(source),
@@ -168,16 +166,28 @@ public class ConfigManager {
         }
     }
 
-    private void createYAML(File resourcePath, boolean replace) {
-        this.createYAML(resourcePath, resourcePath.getName(), replace);
+    private void createYAML(String resourcePath, InputStream sourceFile, boolean replace) {
+        try {
+            File file = new File(folder + "/" + resourcePath);
+            if (!file.exists()) {
+                if (replace) {
+                    Files.copy(sourceFile,
+                            file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } else Files.copy(sourceFile, file.toPath());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    private void createYAML(String resourcePath, boolean replace) {
+        this.createYAML(resourcePath, resourcePath, replace);
+    }
+
 
     private InputStream getResourceAsStream(String name) {
         File file = new File(pluginJar + "/" + name);
-        System.out.println("file to get stream: "+file);
-        System.out.println("classloader 1: "+ this.plugin.getClass().getClassLoader());
-        System.out.println("classloader 2: "+ ClassLoader.getSystemClassLoader());
-        return this.plugin.getClass().getClassLoader().getResourceAsStream(file.getPath());
+        return this.plugin.getClass().getResourceAsStream(name);
     }
 }
 
