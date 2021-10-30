@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public class ColorAPI {
 
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '§' + "[0-9A-FK-OR]");
-    private static char COLOR_CHAR = '§';
 
     /**
      * Colors a String
@@ -34,6 +33,7 @@ public class ColorAPI {
         StringBuffer buffer = new StringBuffer(string.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
+            char COLOR_CHAR = '§';
             matcher.appendReplacement(buffer, COLOR_CHAR + "x"
                     + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
                     + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
