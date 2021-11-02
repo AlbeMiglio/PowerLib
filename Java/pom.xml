@@ -5,7 +5,7 @@
     <parent>
         <artifactId>PowerLibAPI</artifactId>
         <groupId>it.mycraft</groupId>
-        <version>1.2.0-TEST-8</version>
+        <version>1.2.0-TEST-9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>PowerLib</artifactId>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20200518</version>
+            <version>20210307</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -139,12 +139,12 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.24</version>
+            <version>8.0.25</version>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.1.2</version>
+            <version>2.7.3</version>
         </dependency>
     </dependencies>
 

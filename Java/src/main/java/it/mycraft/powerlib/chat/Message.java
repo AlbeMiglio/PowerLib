@@ -101,6 +101,12 @@ public class Message extends it.mycraft.powerlib.common.chat.Message {
         }
     }
 
+    public void send(org.bukkit.command.CommandSender sender) {
+        if (messages.isEmpty())
+            sendBukkitMessage(sender, message);
+        else messages.forEach((m) -> sendBukkitMessage(sender, m));
+    }
+
     public void broadcast(String permission) {
         if (isUsingBukkit()) {
             broadcastBukkit(permission);

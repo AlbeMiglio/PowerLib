@@ -2,6 +2,7 @@ package it.mycraft.powerlib.velocity.config;
 
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginDescription;
+import it.mycraft.powerlib.common.utils.PowerPlugin;
 import it.mycraft.powerlib.configuration.Configuration;
 import it.mycraft.powerlib.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.configuration.YamlConfiguration;
@@ -16,18 +17,18 @@ import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-8
+ * @version 1.2.0-TEST-9
  */
 public class ConfigManager {
 
     private HashMap<String, Configuration> configs;
     private PluginDescription pluginDescription;
-    private Object plugin;
+    private PowerPlugin plugin;
     private File folder;
     private File serverJar;
     private File pluginJar;
 
-    public ConfigManager(Object plugin, PluginDescription pluginDescription) {
+    public ConfigManager(PowerPlugin plugin, PluginDescription pluginDescription) {
         this.configs = new HashMap<>();
         this.pluginDescription = pluginDescription;
         this.plugin = plugin;
@@ -186,8 +187,8 @@ public class ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) {
-        File file = new File(pluginJar + "/" + name);
-        return this.plugin.getClass().getResourceAsStream(name);
+        //File file = new File(pluginJar + "/" + name);
+        return this.plugin.getClass().getClassLoader().getResourceAsStream(name);
     }
 }
 
