@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.0-TEST-10
+ * @version 1.2.0-TEST-11
  */
 public class ConfigManager {
 
@@ -75,9 +75,13 @@ public class ConfigManager {
      * @param file The config file name
      * @return The new file
      */
-    //public Configuration create(String file) {
-    //    return this.create(file, file);
-    //}
+    public Configuration create(String file, String source) {
+        File resourcePath = new File(folder + "/" + file);
+        if (!resourcePath.exists()) {
+            createYAML(file, source, false);
+        } else this.reload(file);
+        return this.configs.get(file);
+    }
 
     /**
      * Saves the config file changes and updates it in the local Map

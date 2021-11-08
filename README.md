@@ -19,7 +19,7 @@
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>PowerLib</artifactId>
-  		<version>1.2.0-TEST-10</version>
+  		<version>1.2.0-TEST-11</version>
 	    </dependency>
 	</dependencies>
 ```
