@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-TEST-11", authors = {"AlbeMiglio", "pompiere1"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-TEST-12", authors = {"AlbeMiglio", "pompiere1"})
 public class PowerLib {
 
     @Getter
