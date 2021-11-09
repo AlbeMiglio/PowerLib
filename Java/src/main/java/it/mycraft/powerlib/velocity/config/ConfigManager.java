@@ -70,6 +70,10 @@ public class ConfigManager {
         return this.configs.get(file);
     }
 
+    public Configuration create(String file) {
+        return create(file, file);
+    }
+
     /**
      * Saves the config file changes and updates it in the local Map
      *
