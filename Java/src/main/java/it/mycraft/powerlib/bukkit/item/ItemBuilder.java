@@ -7,6 +7,7 @@ import com.mojang.authlib.properties.Property;
 import it.mycraft.powerlib.bukkit.PowerLib;
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import it.mycraft.powerlib.reflection.ReflectionAPI;
+import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,10 +24,10 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
+@Getter
 public class ItemBuilder {
-
-    //TODO: Add addEnchant method
 
     private Material material;
 
@@ -35,13 +36,15 @@ public class ItemBuilder {
     private int amount;
     private short metadata;
     private boolean glowing;
-    private Map<Enchantment, Integer> enchantments;
-    private Map<PotionEffect, Boolean> potion;
+    private HashMap<Enchantment, Integer> enchantments;
+    private HashMap<PotionEffect, Boolean> potions;
+    private HashMap<String, Object> placeholders;
 
     public ItemBuilder() {
         lore = new ArrayList<>();
         enchantments = new HashMap<>();
-        potion = new HashMap<>();
+        potions = new HashMap<>();
+        placeholders = new HashMap<>();
         amount = 1;
         metadata = 0;
     }
@@ -74,7 +77,7 @@ public class ItemBuilder {
      * Sets the item's material getting it from an int ID. 1.13+
      *
      * @param id The ID
-     * @return   The ItemBuilder
+     * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id) {
         this.material = LegacyItemAPI.getMaterial(id);
@@ -86,7 +89,7 @@ public class ItemBuilder {
      *
      * @param id   The ID
      * @param data The Data
-     * @return     The ItemBuilder
+     * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id, int data) {
         this.material = LegacyItemAPI.getMaterial(id, data);
@@ -190,7 +193,7 @@ public class ItemBuilder {
      * @return The ItemBuilder
      */
     public ItemBuilder setPotionEffect(PotionEffectType type, int duration, int level, boolean overwrite, boolean ambient, boolean particles) {
-        potion.put(new PotionEffect(type, duration, (level - 1), overwrite, ambient), particles);
+        potions.put(new PotionEffect(type, duration, (level - 1), overwrite, ambient), particles);
         return this;
     }
 
@@ -239,8 +242,9 @@ public class ItemBuilder {
         amount = itemStack.getAmount();
         metadata = itemStack.getDurability();
 
-        if (itemMeta.getDisplayName() != null)
+        if (itemMeta != null) {
             name = itemMeta.getDisplayName();
+        }
 
         if (itemMeta.hasLore())
             lore = itemMeta.getLore();
@@ -342,21 +346,23 @@ public class ItemBuilder {
      * @return The ItemBuilder
      */
     public ItemBuilder addPlaceHolder(String placeholder, Object value) {
-        name = name.replaceAll(placeholder, value.toString());
-
-        List<String> newLore = new ArrayList<>();
-        lore.forEach((s) -> newLore.add(s.replaceAll(placeholder, value.toString())));
-
-        lore = newLore;
+        placeholders.put(placeholder, value);
         return this;
     }
 
     /**
-     * Builds an Itemstack with the data provided previously
+     * Builds an ItemStack with the data provided previously
      *
      * @return The ItemStack
      */
     public ItemStack build() {
+        for(String placeholder : placeholders.keySet()) {
+            Object value = placeholders.get(placeholder);
+            setName(name.replace(placeholder, value.toString()));
+
+            setLore(lore.stream().map((s) -> s.replace(placeholder, value.toString()))
+                    .collect(Collectors.toList()));
+        }
         ItemStack itemStack = new ItemStack(material, amount, metadata);
 
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -380,15 +386,13 @@ public class ItemBuilder {
 
         itemStack.setItemMeta(itemMeta);
 
-        if (material == Material.POTION && !potion.isEmpty()) {
+        if (material == Material.POTION && !potions.isEmpty()) {
             PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
-            for (PotionEffect potionEffect : potion.keySet()) {
-                potionMeta.addCustomEffect(potionEffect, potion.get(potionEffect));
+            for (PotionEffect potionEffect : potions.keySet()) {
+                potionMeta.addCustomEffect(potionEffect, potions.get(potionEffect));
             }
             itemStack.setItemMeta(potionMeta);
         }
-
-        reset();
         return itemStack;
     }
 
@@ -445,9 +449,9 @@ public class ItemBuilder {
      *
      * @param fileConfiguration The file configuration to get the item's info from
      * @param path              The section where the item's info are stored
-     * @return The built ItemStack
+     * @return The related ItemBuilder
      */
-    public ItemStack fromConfig(FileConfiguration fileConfiguration, String path) {
+    public ItemBuilder fromConfig(FileConfiguration fileConfiguration, String path) {
         boolean legacy = false, glowing = false;
         String newPath, material = "STONE", name = null;
         List<String> lore = null;
@@ -489,30 +493,30 @@ public class ItemBuilder {
                     break;
             }
         }
-        return new ItemBuilder()
-                .setMaterial(material)
-                .setName(name)
-                .setLore(lore)
-                .setAmount(amount)
-                .setMetaData(metadata)
-                .setGlowing(glowing)
-                .build();
+        return this.setMaterial(material)
+                .setName(name).setLore(lore)
+                .setAmount(amount).setMetaData(metadata)
+                .setGlowing(glowing);
+    }
+
+    public ItemBuilder hex() {
+        setName(ColorAPI.hex(getName()));
+        setLore(ColorAPI.hex(getLore()));
+        return this;
     }
 
     /**
      * Just puts in the ItemBuilder object its default values
      */
     private void reset() {
-        material = null;
-        name = null;
-
-        lore = null;
-        enchantments = null;
-        potion = null;
-
+        material = Material.STONE;
+        name = "";
+        glowing = false;
+        lore = new ArrayList<>();
+        enchantments = new HashMap<>();
+        potions = new HashMap<>();
+        placeholders = new HashMap<>();
         amount = 1;
         metadata = 0;
-
-        glowing = false;
     }
 }

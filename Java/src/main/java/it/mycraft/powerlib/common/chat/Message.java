@@ -19,10 +19,13 @@ public class Message {
         this.message = "";
         this.messages = new ArrayList<>();
     }
+    public Message(String message, boolean color) {
+        this.message = color ? ColorAPI.color(message) : message;
+        this.messages = new ArrayList<>();
+    }
 
     public Message(String message) {
-        this.message = ColorAPI.color(message);
-        this.messages = new ArrayList<>();
+        this(message, true);
     }
 
     public Message(String... messages) {
@@ -30,19 +33,21 @@ public class Message {
         this.messages = new ArrayList<>(ColorAPI.color(Arrays.asList(messages)));
     }
 
-    public Message(List<String> messages) {
+    public Message(List<String> messages, boolean color) {
         this.message = "";
-        this.messages = new ArrayList<>(ColorAPI.color(messages));
+        this.messages = color ? new ArrayList<>(ColorAPI.color(messages)) : messages;
+    }
+
+    public Message(List<String> messages) {
+        this(messages, true);
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
         message = message.replace(placeholder, value.toString());
-
-        List<String> newMessages = new ArrayList<>();
-        messages.forEach((s) -> newMessages.add(s.replace(placeholder, value.toString())));
-
-        messages = newMessages;
-
+        for(int i = 0; i < messages.size(); i++) {
+            String current = messages.get(i);
+            messages.set(i, current.replace(placeholder, value.toString()));
+        }
         return this;
     }
 

@@ -1,4 +1,5 @@
 name: PowerLib
+author: AlbeMiglio
 authors: [AlbeMiglio, pompiere1]
-main: it.mycraft.powerlib.bukkit.PowerLib
-version: 1.2.0-TEST-12
+main: it.mycraft.powerlib.bungee.PowerLib
+version: 1.2.0

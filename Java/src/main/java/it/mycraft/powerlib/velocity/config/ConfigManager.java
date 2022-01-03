@@ -66,7 +66,8 @@ public class ConfigManager {
         File resourcePath = new File(folder + "/" + file);
         if (!resourcePath.exists()) {
             createYAML(file, source, false);
-        } else this.reload(file);
+        }
+        reload(file);
         return this.configs.get(file);
     }
 

@@ -1,7 +1,9 @@
 package it.mycraft.powerlib.bungee;
 
+import it.mycraft.powerlib.bungee.config.ConfigManager;
 import it.mycraft.powerlib.bungee.updater.PluginUpdater;
 import it.mycraft.powerlib.common.chat.Message;
+import it.mycraft.powerlib.configuration.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,10 +26,15 @@ public class PowerLib extends Plugin implements Listener {
     @Getter
     private static PowerLib instance;
 
+    @Getter
+    private ConfigManager configManager;
+
     private PluginUpdater updater;
 
     public void onEnable() {
         instance = this;
+        this.configManager = new ConfigManager(this);
+        this.configManager.create("config.yml");
         this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
         getProxy().getPluginManager().registerListener(this, this);
         Metrics metrics = new Metrics(this, 11162);
@@ -35,6 +42,9 @@ public class PowerLib extends Plugin implements Listener {
 
     @EventHandler
     public void onJoin(ServerConnectedEvent event) {
+        if(!getConfig().getBoolean("check-for-updates")) {
+            return;
+        }
         ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
             ProxiedPlayer player = event.getPlayer();
             if (!player.hasPermission("powerlib.update")) {
@@ -51,5 +61,9 @@ public class PowerLib extends Plugin implements Listener {
                 player.sendMessage(update);
             }
         });
+    }
+
+    public Configuration getConfig() {
+        return this.configManager.get("config.yml");
     }
 }

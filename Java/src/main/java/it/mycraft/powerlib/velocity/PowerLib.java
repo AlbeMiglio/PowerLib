@@ -10,6 +10,8 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.mycraft.powerlib.common.chat.Message;
+import it.mycraft.powerlib.configuration.Configuration;
+import it.mycraft.powerlib.velocity.config.ConfigManager;
 import it.mycraft.powerlib.velocity.updater.PluginUpdater;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -20,7 +22,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0-TEST-12", authors = {"AlbeMiglio", "pompiere1"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.0", authors = {"AlbeMiglio", "pompiere1"})
 public class PowerLib {
 
     @Getter
@@ -32,6 +34,7 @@ public class PowerLib {
     @Getter
     private static PowerLib instance;
     private PluginUpdater updater;
+    private ConfigManager configManager;
 
     @Inject
     public void init(ProxyServer proxy, PluginDescription description, Logger logger, Metrics.Factory metricsFactory,
@@ -46,12 +49,17 @@ public class PowerLib {
 
     @Subscribe
     public void onEnable(ProxyInitializeEvent event) {
+        this.configManager = new ConfigManager(description);
+        this.configManager.create("config.yml");
         this.updater = new PluginUpdater(description.getVersion().get()).setGitHubURL("AlbeMiglio", "PowerLib");
         Metrics metrics = metricsFactory.make(this, 11190);
     }
 
     @Subscribe
     public void onServerConnected(ServerPostConnectEvent ev) {
+        if(!getConfig().getBoolean("check-for-updates")) {
+            return;
+        }
         getProxy().getScheduler().buildTask(this, () -> {
                Player player = ev.getPlayer();
                if (!player.hasPermission("powerlib.update")) {
@@ -67,5 +75,9 @@ public class PowerLib {
                    player.sendMessage(update);
                }
         }).schedule();
+    }
+
+    public Configuration getConfig() {
+        return this.configManager.get("config.yml");
     }
 }
