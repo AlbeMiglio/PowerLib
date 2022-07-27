@@ -70,8 +70,8 @@
             <url>https://libraries.minecraft.net/</url>
         </repository>
         <repository>
-            <id>velocity</id>
-            <url>https://repo.velocitypowered.com/snapshots/</url>
+            <id>paper</id>
+            <url>https://papermc.io/repo/repository/maven-releases/</url>
         </repository>
     </repositories>
 
@@ -139,7 +139,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.1.2-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
