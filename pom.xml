@@ -5,12 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.mycraft</groupId>
-    <artifactId>powerlib-api</artifactId>
+    <artifactId>powerlib</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <modules>
-        <module>Example</module>
-        <module>Java</module>
+        <module>bukkit</module>
+        <module>bungee</module>
+        <module>velocity</module>
+        <module>common</module>
+        <module>all</module>
     </modules>
     <distributionManagement>
         <repository>
@@ -28,4 +31,13 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
