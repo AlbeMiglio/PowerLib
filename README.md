@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/AlbeMiglio/PowerLib.svg?branch=master)](https://travis-ci.com/AlbeMiglio/PowerLib)
 ![GitHub](https://img.shields.io/github/license/AlbeMiglio/PowerLib?color=bright-green&label=License)
 ![GitHub All Releases](https://img.shields.io/github/downloads/AlbeMiglio/PowerLib/total?color=brightgreen&label=Downloads)
-[![Discord](https://img.shields.io/discord/618742870035398684?logo=Join%20on%20Discord&label=Discord)](https://discord.gg/XuBvVG8)
+[![Discord](https://img.shields.io/discord/618742870035398684?logo=Join%20on%20Discord&label=Discord)](https://discord.gg/UMhsCZk)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=AlbeMiglio_PowerLib&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=AlbeMiglio_PowerLib)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=AlbeMiglio_PowerLib&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=AlbeMiglio_PowerLib)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=AlbeMiglio_PowerLib&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=AlbeMiglio_PowerLib)
