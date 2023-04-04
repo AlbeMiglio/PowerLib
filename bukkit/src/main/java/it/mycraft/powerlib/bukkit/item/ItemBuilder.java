@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import it.mycraft.powerlib.bukkit.PowerLib;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
+import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -490,6 +491,61 @@ public class ItemBuilder {
                 case "glowing":
                     newPath = path + ".glowing";
                     glowing = fileConfiguration.getBoolean(newPath);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return this.setMaterial(material)
+                .setName(name).setLore(lore)
+                .setAmount(amount).setMetaData(metadata)
+                .setGlowing(glowing);
+    }
+
+    /**
+     * Looks for any item's info in the provided NATIVE Configuration and builds an ItemStack from it
+     *
+     * @param configuration NATIVE CONFIGURATION to get the item's info from
+     * @param path              The section where the item's info are stored
+     * @return The related ItemBuilder
+     */
+    public ItemBuilder fromConfig(Configuration configuration, String path) {
+        boolean legacy = false, glowing = false;
+        String newPath, material = "STONE", name = null;
+        List<String> lore = null;
+        int amount = 1;
+        short metadata = 0;
+
+        for (String s : configuration.getSection(path).getKeys()) {
+            switch (s) {
+                case "legacy":
+                    newPath = path + ".legacy";
+                    legacy = configuration.getBoolean(newPath);
+                    break;
+                case "material":
+                    newPath = path + ".material";
+                    material = legacy ? "LEGACY_" + configuration.getString(newPath) :
+                            configuration.getString(newPath);
+                    break;
+                case "name":
+                    newPath = path + ".name";
+                    name = configuration.getString(newPath);
+                    break;
+                case "lore":
+                    newPath = path + ".lore";
+                    lore = configuration.getStringList(newPath);
+                    break;
+                case "amount":
+                    newPath = path + ".amount";
+                    amount = configuration.getInt(newPath);
+                    break;
+                case "metadata":
+                    newPath = path + ".metadata";
+                    metadata = (short) configuration.getInt(newPath);
+                    break;
+                case "glowing":
+                    newPath = path + ".glowing";
+                    glowing = configuration.getBoolean(newPath);
                     break;
                 default:
                     break;

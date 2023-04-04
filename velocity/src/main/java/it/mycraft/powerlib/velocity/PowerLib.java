@@ -11,7 +11,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
-import it.mycraft.powerlib.velocity.config.ConfigManager;
+import it.mycraft.powerlib.velocity.config.VelocityConfigManager;
 import it.mycraft.powerlib.velocity.updater.PluginUpdater;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.1", authors = {"AlbeMiglio", "FranFrau"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.3", authors = {"AlbeMiglio", "FranFrau"})
 public class PowerLib {
 
     @Getter
@@ -34,7 +34,7 @@ public class PowerLib {
     @Getter
     private static PowerLib instance;
     private PluginUpdater updater;
-    private ConfigManager configManager;
+    private VelocityConfigManager velocityConfigManager;
 
     @Inject
     public void init(ProxyServer proxy, PluginDescription description, Logger logger, Metrics.Factory metricsFactory,
@@ -49,8 +49,8 @@ public class PowerLib {
 
     @Subscribe
     public void onEnable(ProxyInitializeEvent event) {
-        this.configManager = new ConfigManager(description);
-        this.configManager.create("config.yml");
+        this.velocityConfigManager = new VelocityConfigManager(description);
+        this.velocityConfigManager.create("config.yml");
         this.updater = new PluginUpdater(description.getVersion().get()).setGitHubURL("AlbeMiglio", "PowerLib");
         Metrics metrics = metricsFactory.make(this, 11190);
     }
@@ -78,6 +78,6 @@ public class PowerLib {
     }
 
     public Configuration getConfig() {
-        return this.configManager.get("config.yml");
+        return this.velocityConfigManager.get("config.yml");
     }
 }

@@ -2,6 +2,7 @@ package it.mycraft.powerlib.velocity.config;
 
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginDescription;
+import it.mycraft.powerlib.common.configuration.ConfigManager;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.common.configuration.YamlConfiguration;
@@ -19,9 +20,9 @@ import java.util.zip.ZipInputStream;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.1
+ * @version 1.2.2
  */
-public class ConfigManager {
+public class VelocityConfigManager extends ConfigManager {
 
     private final HashMap<String, Configuration> configs;
     private final PluginDescription pluginDescription;
@@ -29,7 +30,7 @@ public class ConfigManager {
     private File serverJar;
     private File pluginJar;
 
-    public ConfigManager(PluginDescription pluginDescription) {
+    public VelocityConfigManager(PluginDescription pluginDescription) {
         this.configs = new HashMap<>();
         this.pluginDescription = pluginDescription;
         try {

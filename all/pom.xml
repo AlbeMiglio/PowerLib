@@ -5,7 +5,7 @@
     <parent>
         <artifactId>powerlib</artifactId>
         <groupId>it.mycraft</groupId>
-        <version>1.2.1</version>
+        <version>1.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-bukkit</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-bungee</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-velocity</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-common</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

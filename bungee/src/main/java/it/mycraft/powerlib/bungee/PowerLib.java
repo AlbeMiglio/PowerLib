@@ -1,6 +1,6 @@
 package it.mycraft.powerlib.bungee;
 
-import it.mycraft.powerlib.bungee.config.ConfigManager;
+import it.mycraft.powerlib.bungee.config.BungeeConfigManager;
 import it.mycraft.powerlib.bungee.updater.PluginUpdater;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
@@ -27,14 +27,14 @@ public class PowerLib extends Plugin implements Listener {
     private static PowerLib instance;
 
     @Getter
-    private ConfigManager configManager;
+    private BungeeConfigManager bungeeConfigManager;
 
     private PluginUpdater updater;
 
     public void onEnable() {
         instance = this;
-        this.configManager = new ConfigManager(this);
-        this.configManager.create("config.yml");
+        this.bungeeConfigManager = new BungeeConfigManager(this);
+        this.bungeeConfigManager.create("config.yml");
         this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
         getProxy().getPluginManager().registerListener(this, this);
         Metrics metrics = new Metrics(this, 11162);
@@ -64,6 +64,6 @@ public class PowerLib extends Plugin implements Listener {
     }
 
     public Configuration getConfig() {
-        return this.configManager.get("config.yml");
+        return this.bungeeConfigManager.get("config.yml");
     }
 }

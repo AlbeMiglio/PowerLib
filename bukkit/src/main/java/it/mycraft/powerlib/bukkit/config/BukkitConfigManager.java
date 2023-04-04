@@ -1,9 +1,10 @@
-package it.mycraft.powerlib.bungee.config;
+package it.mycraft.powerlib.bukkit.config;
 
+import it.mycraft.powerlib.common.configuration.ConfigManager;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.common.configuration.YamlConfiguration;
-import net.md_5.bungee.api.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,22 +19,22 @@ import java.util.zip.ZipInputStream;
 
 /**
  * @author AlbeMiglio
- * @version 1.2.1
+ * @version 1.2.2
  */
-public class ConfigManager {
+public class BukkitConfigManager extends ConfigManager {
 
     private HashMap<String, Configuration> configs;
-    private Plugin plugin;
+    private JavaPlugin plugin;
     private File folder;
     private File serverJar;
     private File pluginJar;
 
-    public ConfigManager(Plugin plugin) {
+    public BukkitConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.configs = new HashMap<>();
         try {
-            serverJar = new File(Plugin.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            pluginJar = this.plugin.getFile();
+            serverJar = new File(JavaPlugin.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            pluginJar = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
             folder = this.plugin.getDataFolder();
             if (!folder.exists()) {
                 folder.mkdir();

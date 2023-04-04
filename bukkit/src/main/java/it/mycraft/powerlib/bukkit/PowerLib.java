@@ -1,14 +1,14 @@
 package it.mycraft.powerlib.bukkit;
 
-import it.mycraft.powerlib.bukkit.config.ConfigManager;
+import it.mycraft.powerlib.bukkit.config.BukkitConfigManager;
 import it.mycraft.powerlib.bukkit.updater.PluginUpdater;
 import it.mycraft.powerlib.common.chat.Message;
+import it.mycraft.powerlib.common.configuration.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,14 +27,14 @@ public class PowerLib extends JavaPlugin implements Listener {
     private static PowerLib instance;
 
     @Getter
-    private ConfigManager configManager;
+    private BukkitConfigManager bukkitConfigManager;
 
     private PluginUpdater updater;
 
     public void onEnable() {
         instance = this;
-        this.configManager = new ConfigManager(this);
-        this.configManager.create("config.yml");
+        this.bukkitConfigManager = new BukkitConfigManager(this);
+        this.bukkitConfigManager.create("config.yml");
         this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
         Bukkit.getPluginManager().registerEvents(this, this);
         Metrics metrics = new Metrics(this, 11161);
@@ -42,7 +42,7 @@ public class PowerLib extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if(!getConfig().getBoolean("check-for-updates")) {
+        if(!getConfiguration().getBoolean("check-for-updates")) {
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -63,8 +63,7 @@ public class PowerLib extends JavaPlugin implements Listener {
         });
     }
 
-    @Override
-    public FileConfiguration getConfig() {
-        return this.configManager.get("config.yml");
+    public Configuration getConfiguration() {
+        return this.bukkitConfigManager.get("config.yml");
     }
 }
