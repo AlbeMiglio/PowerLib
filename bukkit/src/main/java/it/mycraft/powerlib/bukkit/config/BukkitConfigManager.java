@@ -153,14 +153,13 @@ public class BukkitConfigManager extends ConfigManager {
             File file = new File(folder + "/" + resourcePath);
             if (!file.getParentFile().exists() || !file.exists()) {
                 file.getParentFile().mkdir();
-                if (!file.exists()) {
-                    file.createNewFile();
+                if (file.createNewFile()) {
+                    replace = true;
                 }
-                boolean forcereplace = replace;
                 if(file.length() == 0) {
-                    forcereplace = true;
+                    replace = true;
                 }
-                if (forcereplace) {
+                if (replace) {
                     Files.copy(getResourceAsStream(source),
                             file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());

@@ -145,22 +145,21 @@ public class BungeeConfigManager extends ConfigManager {
      *
      * @param resourcePath The file name
      * @param source       The source file name
-     * @param replace      Whether the file has to be replaced by the default one although it already exists
-     * @author Original code from JavaPlugin.class
+     * @param replace      Whether the file has to be replaced by the default one, although it already exists
+     * @author Original code from JavaPlugin class
      */
     private void createYAML(String resourcePath, String source, boolean replace) {
         try {
             File file = new File(folder + "/" + resourcePath);
             if (!file.getParentFile().exists() || !file.exists()) {
                 file.getParentFile().mkdir();
-                if (!file.exists()) {
-                    file.createNewFile();
+                if (file.createNewFile()) {
+                    replace = true;
                 }
-                boolean forcereplace = replace;
                 if(file.length() == 0) {
-                    forcereplace = true;
+                    replace = true;
                 }
-                if (forcereplace) {
+                if (replace) {
                     Files.copy(getResourceAsStream(source),
                             file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());

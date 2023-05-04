@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerlib-all</artifactId>
-    <version>${parent.version}</version>
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
