@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -15,21 +16,19 @@ import java.util.Map;
 
 /**
  * Original fragments from bungeecord
+ *
  * @author md_5
  */
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class YamlConfiguration extends ConfigurationProvider {
 
     private final ThreadLocal<Yaml> yaml = ThreadLocal.withInitial(() -> {
-
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Representer representer = new Representer(options) {
-            {
-                representers.put(Configuration.class, data -> represent(((Configuration) data).self));
-            }
-        };
-        return new Yaml(representer, options);
+
+        YamlRepresenter representer = new YamlRepresenter(options);
+
+        return new Yaml(new Constructor(new LoaderOptions()), representer, options);
     });
 
     @Override

@@ -5,6 +5,7 @@ import it.mycraft.powerlib.bukkit.updater.PluginUpdater;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
@@ -24,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class PowerLib extends JavaPlugin implements Listener {
 
     @Getter
+    @Setter
     private static PowerLib instance;
 
     @Getter
@@ -32,12 +34,12 @@ public class PowerLib extends JavaPlugin implements Listener {
     private PluginUpdater updater;
 
     public void onEnable() {
-        instance = this;
+        setInstance(this);
         this.bukkitConfigManager = new BukkitConfigManager(this);
         this.bukkitConfigManager.create("config.yml");
         this.updater = new PluginUpdater(this).setGitHubURL("AlbeMiglio", "PowerLib");
         Bukkit.getPluginManager().registerEvents(this, this);
-        Metrics metrics = new Metrics(this, 11161);
+        new Metrics(this, 11161);
     }
 
     @EventHandler
