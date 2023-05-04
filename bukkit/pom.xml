@@ -51,7 +51,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>it.mycraft.powerlib.bstats</shadedPattern>
+                                    <shadedPattern>it.mycraft.powerlib.bukkit.bstats</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
