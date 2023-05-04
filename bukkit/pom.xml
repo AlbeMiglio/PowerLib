@@ -31,7 +31,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.26</version>
+                            <version>1.18.22</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -47,6 +47,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
@@ -87,25 +88,37 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-common</artifactId>
-            <version>1.2.3</version>
+            <version>${parent.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
-            <version>1.5.25</version>
+            <version>3.11.50</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

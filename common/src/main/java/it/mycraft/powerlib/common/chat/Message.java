@@ -2,6 +2,8 @@ package it.mycraft.powerlib.common.chat;
 
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import it.mycraft.powerlib.common.utils.ServerAPI;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +13,8 @@ public class Message {
 
     private String message;
     private List<String> messages;
+    private HoverEvent hoverEvent = null;
+    private ClickEvent clickEvent = null;
 
     public Message() {
         this.message = "";
@@ -41,10 +45,7 @@ public class Message {
 
     public Message addPlaceHolder(String placeholder, Object value) {
         message = message.replace(placeholder, value.toString());
-        for(int i = 0; i < messages.size(); i++) {
-            String current = messages.get(i);
-            messages.set(i, current.replace(placeholder, value.toString()));
-        }
+        messages.replaceAll(s -> s.replace(placeholder, value.toString()));
         return this;
     }
 

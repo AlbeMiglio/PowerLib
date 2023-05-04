@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public class ItemBuilder {
 
     private Material material;
-
     private String name;
     private List<String> lore;
     private int amount;
@@ -272,15 +271,15 @@ public class ItemBuilder {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         byte[] encodedData;
 
-        /*if (version >= 14) {
+        encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+
+        /*
+        if (version >= 14) {
             encodedData = org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64
                     .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-        } else {
-
+        }
         }*/
-        // removed temporarily due to craftbukkit missing support for java 9 modules
-        encodedData = org.apache.commons.codec.binary.Base64
-                .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         try {
             Field profileField = skullMeta.getClass().getDeclaredField("profile");

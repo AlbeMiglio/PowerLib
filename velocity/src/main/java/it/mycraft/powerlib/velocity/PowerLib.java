@@ -2,6 +2,7 @@ package it.mycraft.powerlib.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -56,7 +57,7 @@ public class PowerLib {
     }
 
     @Subscribe
-    public void onServerConnected(ServerPostConnectEvent ev) {
+    public void onServerConnected(ServerConnectedEvent ev) {
         if(!getConfig().getBoolean("check-for-updates")) {
             return;
         }
@@ -69,8 +70,8 @@ public class PowerLib {
                    Message m = new Message("&c&lYour version of PowerLib is outdated!");
                    Message m1 = new Message("&a&nClick here to update to v{version}!")
                            .addPlaceHolder("{version}", this.updater.getLatestVersion());
-                   Component update = Component.text(m1.getText());
-                   update.clickEvent(ClickEvent.openUrl("https://github.com/AlbeMiglio/PowerLib/releases/latest"));
+                   Component update = Component.text(m1.getText())
+                           .clickEvent(ClickEvent.openUrl("https://github.com/AlbeMiglio/PowerLib/releases/latest"));
                    m.send(player);
                    player.sendMessage(update);
                }

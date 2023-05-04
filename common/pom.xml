@@ -28,13 +28,6 @@
                     <encoding>UTF-8</encoding>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.26</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
@@ -64,6 +57,24 @@
             <artifactId>snakeyaml</artifactId>
             <version>2.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-chat</artifactId>
+            <version>1.19-R0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.13.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

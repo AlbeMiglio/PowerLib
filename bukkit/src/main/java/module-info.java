@@ -6,7 +6,6 @@ module it.mycraft.powerlib.bukkit {
     requires authlib;
     requires com.google.common;
     requires java.logging;
-    requires commons.codec;
     requires java.json;
     requires lombok;
 }

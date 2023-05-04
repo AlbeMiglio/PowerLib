@@ -4,6 +4,7 @@ module it.mycraft.powerlib.common {
     exports it.mycraft.powerlib.common.enums;
     exports it.mycraft.powerlib.common.utils;
     exports it.mycraft.powerlib.common.configuration;
+    requires net.kyori.adventure;
     requires com.google.common;
     requires java.json;
     requires lombok;

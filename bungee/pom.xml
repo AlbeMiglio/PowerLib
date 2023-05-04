@@ -27,13 +27,6 @@
                     <encoding>UTF-8</encoding>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.26</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -47,6 +40,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
@@ -69,26 +63,42 @@
     </build>
 
     <repositories>
-
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-common</artifactId>
-            <version>1.2.3</version>
+            <version>${parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
+            <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

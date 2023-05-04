@@ -23,7 +23,7 @@ PowerLib is a server-side user interface library for Spigot, BungeeCord and Velo
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>powerlib-<YOUR-PLATFORM></artifactId>
-  		<version>1.2.1</version>
+  		<version>1.2.3</version>
 		<scope>provided</scope>
 	    </dependency>
 	</dependencies>

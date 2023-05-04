@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,21 +21,20 @@ import java.util.Map;
 public class YamlConfiguration extends ConfigurationProvider {
 
     private final ThreadLocal<Yaml> yaml = ThreadLocal.withInitial(() -> {
-        Representer representer = new Representer() {
+
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Representer representer = new Representer(options) {
             {
                 representers.put(Configuration.class, data -> represent(((Configuration) data).self));
             }
         };
-
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-        return new Yaml(new Constructor(), representer, options);
+        return new Yaml(representer, options);
     });
 
     @Override
     public void save(Configuration config, File file) throws IOException {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), Charsets.UTF_8)) {
             save(config, writer);
         }
     }
