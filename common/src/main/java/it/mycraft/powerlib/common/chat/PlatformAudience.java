@@ -7,7 +7,7 @@ public abstract class PlatformAudience {
     protected PlatformAudience() {
     }
 
-    protected String audienceAdapterClassName;
+    protected Class<?> audienceAdapterClass;
     protected Method playerAudience;
     protected Method consoleAudience;
     protected Method allPlayersAudience;

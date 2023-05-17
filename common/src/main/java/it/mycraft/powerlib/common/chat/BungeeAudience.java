@@ -5,16 +5,20 @@ import java.util.function.Predicate;
 public class BungeeAudience extends PlatformAudience {
 
     protected BungeeAudience() {
-        audienceAdapterClassName = "it.mycraft.powerlib.bungee.adapters.AudienceAdapter";
+        try {
+            audienceAdapterClass = Class.forName("it.mycraft.powerlib.bungee.adapters.AudienceAdapter");
+        }
+        catch (ClassNotFoundException e) {
+            sendError();
+        }
     }
 
     @Override
     protected void loadPlayerAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             Class<?> commandSenderClass = Class.forName("net.md_5.bungee.api.CommandSender");
             playerAudience = audienceAdapterClass.getMethod("audience", commandSenderClass);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
             sendError();
         }
     }
@@ -22,9 +26,8 @@ public class BungeeAudience extends PlatformAudience {
     @Override
     protected void loadConsoleAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             consoleAudience = audienceAdapterClass.getMethod("console");
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             sendError();
         }
     }
@@ -32,9 +35,8 @@ public class BungeeAudience extends PlatformAudience {
     @Override
     protected void loadAllPlayersAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             allPlayersAudience = audienceAdapterClass.getMethod("players");
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             sendError();
         }
     }
@@ -42,9 +44,8 @@ public class BungeeAudience extends PlatformAudience {
     @Override
     protected void loadAllAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             allAudience = audienceAdapterClass.getMethod("all");
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             sendError();
         }
     }
@@ -52,9 +53,8 @@ public class BungeeAudience extends PlatformAudience {
     @Override
     protected void loadPermissionAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             permissionAudience = audienceAdapterClass.getMethod("audience", String.class);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             sendError();
         }
     }
@@ -62,9 +62,8 @@ public class BungeeAudience extends PlatformAudience {
     @Override
     protected void loadFilterAudience() {
         try {
-            Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
             filterAudience = audienceAdapterClass.getMethod("audience", Predicate.class);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             sendError();
         }
     }
