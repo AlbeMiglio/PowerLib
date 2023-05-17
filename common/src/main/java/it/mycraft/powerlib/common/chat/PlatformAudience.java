@@ -3,12 +3,13 @@ package it.mycraft.powerlib.common.chat;
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
-public class PlatformAudience {
+public abstract class PlatformAudience {
 
     protected PlatformAudience() {
     }
 
     protected Class<?> audienceAdapterClass;
+    protected Class<?> commandSenderClass;
     protected Method playerAudience;
     protected Method consoleAudience;
     protected Method allPlayersAudience;
@@ -59,7 +60,11 @@ public class PlatformAudience {
     }
 
     protected void loadPlayerAudience() {
-
+        try {
+            playerAudience = audienceAdapterClass.getMethod("audience", commandSenderClass);
+        } catch (Exception e) {
+            sendError();
+        }
     }
 
     protected void loadConsoleAudience() {

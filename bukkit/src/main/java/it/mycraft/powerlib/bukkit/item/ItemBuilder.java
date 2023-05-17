@@ -220,13 +220,13 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the item's glowing
+     * Sets the item's itemGlowing
      *
-     * @param glowing True to set item glowing
+     * @param itemGlowing True to set item itemGlowing
      * @return The ItemBuilder
      */
-    public ItemBuilder setGlowing(boolean glowing) {
-        this.glowing = glowing;
+    public ItemBuilder setGlowing(boolean itemGlowing) {
+        this.glowing = itemGlowing;
         return this;
     }
 
@@ -272,13 +272,6 @@ public class ItemBuilder {
         byte[] encodedData;
 
         encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-
-        /*
-        if (version >= 14) {
-            encodedData = org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64
-                    .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-        }
-        }*/
 
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         try {
@@ -454,8 +447,11 @@ public class ItemBuilder {
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(FileConfiguration fileConfiguration, String path) {
-        boolean legacy = false, glowing = false;
-        String newPath, material = "STONE", name = null;
+        boolean legacy = false;
+        boolean itemGlowing = false;
+        String newPath;
+        String material = "STONE";
+        String name = null;
         List<String> lore = null;
         int amount = 1;
         short metadata = 0;
@@ -487,9 +483,9 @@ public class ItemBuilder {
                     newPath = path + ".metadata";
                     metadata = (short) fileConfiguration.getInt(newPath);
                     break;
-                case "glowing":
-                    newPath = path + ".glowing";
-                    glowing = fileConfiguration.getBoolean(newPath);
+                case "itemGlowing":
+                    newPath = path + ".itemGlowing";
+                    itemGlowing = fileConfiguration.getBoolean(newPath);
                     break;
                 default:
                     break;
@@ -498,7 +494,7 @@ public class ItemBuilder {
         return this.setMaterial(material)
                 .setName(name).setLore(lore)
                 .setAmount(amount).setMetaData(metadata)
-                .setGlowing(glowing);
+                .setGlowing(itemGlowing);
     }
 
     /**
@@ -509,8 +505,11 @@ public class ItemBuilder {
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(Configuration configuration, String path) {
-        boolean legacy = false, glowing = false;
-        String newPath, material = "STONE", name = null;
+        boolean legacy = false;
+        boolean itemGlowing = false;
+        String newPath;
+        String material = "STONE";
+        String name = null;
         List<String> lore = null;
         int amount = 1;
         short metadata = 0;
@@ -542,9 +541,9 @@ public class ItemBuilder {
                     newPath = path + ".metadata";
                     metadata = (short) configuration.getInt(newPath);
                     break;
-                case "glowing":
-                    newPath = path + ".glowing";
-                    glowing = configuration.getBoolean(newPath);
+                case "itemGlowing":
+                    newPath = path + ".itemGlowing";
+                    itemGlowing = configuration.getBoolean(newPath);
                     break;
                 default:
                     break;
@@ -553,7 +552,7 @@ public class ItemBuilder {
         return this.setMaterial(material)
                 .setName(name).setLore(lore)
                 .setAmount(amount).setMetaData(metadata)
-                .setGlowing(glowing);
+                .setGlowing(itemGlowing);
     }
 
     public ItemBuilder hex() {

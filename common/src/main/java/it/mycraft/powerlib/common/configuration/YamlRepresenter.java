@@ -47,17 +47,6 @@ public class YamlRepresenter extends Representer {
         super.checkGlobalTag(property, node, object);
     }
 
-    private void resetTag(Class<? extends Object> type, Node node) {
-        Tag tag = node.getTag();
-        if (tag.matches(type)) {
-            if (Enum.class.isAssignableFrom(type)) {
-                node.setTag(Tag.STR);
-            } else {
-                node.setTag(Tag.MAP);
-            }
-        }
-    }
-
     @Override
     protected Set<Property> getProperties(Class<?> type) {
         return super.getProperties(type);
