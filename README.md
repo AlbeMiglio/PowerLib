@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.1'
+    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.4'
 }
 ```
 
