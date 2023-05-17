@@ -23,7 +23,7 @@ public class VelocityAudience extends PlatformAudience {
     protected void loadConsoleAudience() {
         try {
             Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
-            playerAudience = audienceAdapterClass.getMethod("console");
+            consoleAudience = audienceAdapterClass.getMethod("console");
         } catch (Exception e) {
             sendError();
         }
@@ -33,7 +33,7 @@ public class VelocityAudience extends PlatformAudience {
     protected void loadAllPlayersAudience() {
         try {
             Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
-            playerAudience = audienceAdapterClass.getMethod("players");
+            allPlayersAudience = audienceAdapterClass.getMethod("players");
         } catch (Exception e) {
             sendError();
         }
@@ -43,7 +43,7 @@ public class VelocityAudience extends PlatformAudience {
     protected void loadAllAudience() {
         try {
             Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
-            playerAudience = audienceAdapterClass.getMethod("all");
+            allAudience = audienceAdapterClass.getMethod("all");
         } catch (Exception e) {
             sendError();
         }
@@ -53,7 +53,7 @@ public class VelocityAudience extends PlatformAudience {
     protected void loadPermissionAudience() {
         try {
             Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
-            playerAudience = audienceAdapterClass.getMethod("audience", String.class);
+            permissionAudience = audienceAdapterClass.getMethod("audience", String.class);
         } catch (Exception e) {
             sendError();
         }
@@ -63,7 +63,7 @@ public class VelocityAudience extends PlatformAudience {
     protected void loadFilterAudience() {
         try {
             Class<?> audienceAdapterClass = Class.forName(audienceAdapterClassName);
-            playerAudience = audienceAdapterClass.getMethod("audience", Predicate.class);
+            filterAudience = audienceAdapterClass.getMethod("audience", Predicate.class);
         } catch (Exception e) {
             sendError();
         }
