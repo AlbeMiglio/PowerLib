@@ -1,8 +1,9 @@
 package it.mycraft.powerlib.common.chat;
 
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
-public abstract class PlatformAudience {
+public class PlatformAudience {
 
     protected PlatformAudience() {
     }
@@ -57,17 +58,49 @@ public abstract class PlatformAudience {
         return filterAudience;
     }
 
-    protected abstract void loadPlayerAudience();
+    protected void loadPlayerAudience() {
 
-    protected abstract void loadConsoleAudience();
+    }
 
-    protected abstract void loadAllPlayersAudience();
+    protected void loadConsoleAudience() {
+        try {
+            consoleAudience = audienceAdapterClass.getMethod("console");
+        } catch (NoSuchMethodException e) {
+            sendError();
+        }
+    }
 
-    protected abstract void loadAllAudience();
+    protected void loadAllPlayersAudience() {
+        try {
+            allPlayersAudience = audienceAdapterClass.getMethod("players");
+        } catch (NoSuchMethodException e) {
+            sendError();
+        }
+    }
 
-    protected abstract void loadPermissionAudience();
+    protected void loadAllAudience() {
+        try {
+            allAudience = audienceAdapterClass.getMethod("all");
+        } catch (NoSuchMethodException e) {
+            sendError();
+        }
+    }
 
-    protected abstract void loadFilterAudience();
+    protected void loadPermissionAudience() {
+        try {
+            permissionAudience = audienceAdapterClass.getMethod("audience", String.class);
+        } catch (NoSuchMethodException e) {
+            sendError();
+        }
+    }
+
+    protected void loadFilterAudience() {
+        try {
+            filterAudience = audienceAdapterClass.getMethod("audience", Predicate.class);
+        } catch (NoSuchMethodException e) {
+            sendError();
+        }
+    }
 
     protected void sendError() {
         System.out.println("Exception encountered while loading PowerLib message instances. Please contact an administrator!");

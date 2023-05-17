@@ -4,6 +4,7 @@ import it.mycraft.powerlib.common.configuration.ConfigManager;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.common.configuration.YamlConfiguration;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -41,7 +43,7 @@ public class BukkitConfigManager extends ConfigManager {
             }
         }
         catch(URISyntaxException ex) {
-            ex.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while creating ConfigManager! Please contact an administrator!");
         }
     }
 
@@ -89,7 +91,7 @@ public class BukkitConfigManager extends ConfigManager {
             ConfigurationProvider.getProvider(YamlConfiguration.class)
                     .save(config, new File(folder + "/" + file));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while saving a yaml file! Please contact an administrator!");
         }
         this.put(file, config);
     }
@@ -126,7 +128,7 @@ public class BukkitConfigManager extends ConfigManager {
             return ConfigurationProvider.getProvider(YamlConfiguration.class)
                     .load(new File(folder + "/" + file));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while loading a yaml file! Please contact an administrator!");
             return null;
         }
     }
@@ -165,7 +167,7 @@ public class BukkitConfigManager extends ConfigManager {
                 } else Files.copy(getResourceAsStream(source), file.toPath());
             }
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while creating a yaml file! Please contact an administrator!");
         }
     }
 
