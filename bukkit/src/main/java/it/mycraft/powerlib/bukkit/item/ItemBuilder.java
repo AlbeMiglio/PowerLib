@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public class ItemBuilder {
 
     private Material material;
-
     private String name;
     private List<String> lore;
     private int amount;
@@ -221,13 +220,13 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the item's glowing
+     * Sets the item's itemGlowing
      *
-     * @param glowing True to set item glowing
+     * @param itemGlowing True to set item itemGlowing
      * @return The ItemBuilder
      */
-    public ItemBuilder setGlowing(boolean glowing) {
-        this.glowing = glowing;
+    public ItemBuilder setGlowing(boolean itemGlowing) {
+        this.glowing = itemGlowing;
         return this;
     }
 
@@ -272,15 +271,8 @@ public class ItemBuilder {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         byte[] encodedData;
 
-        /*if (version >= 14) {
-            encodedData = org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64
-                    .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-        } else {
+        encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
 
-        }*/
-        // removed temporarily due to craftbukkit missing support for java 9 modules
-        encodedData = org.apache.commons.codec.binary.Base64
-                .encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         try {
             Field profileField = skullMeta.getClass().getDeclaredField("profile");
@@ -455,51 +447,54 @@ public class ItemBuilder {
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(FileConfiguration fileConfiguration, String path) {
-        boolean legacy = false, glowing = false;
-        String newPath, material = "STONE", name = null;
-        List<String> lore = null;
-        int amount = 1;
-        short metadata = 0;
+        boolean itemLegacy = false;
+        boolean itemGlowing = false;
+        String newPath;
+        String itemMaterial = "STONE";
+        String itemName = null;
+        List<String> itemLore = null;
+        int itemAmount = 1;
+        short itemMetadata = 0;
 
         for (String s : fileConfiguration.getConfigurationSection(path).getKeys(false)) {
             switch (s) {
                 case "legacy":
                     newPath = path + ".legacy";
-                    legacy = fileConfiguration.getBoolean(newPath);
+                    itemLegacy = fileConfiguration.getBoolean(newPath);
                     break;
                 case "material":
                     newPath = path + ".material";
-                    material = legacy ? "LEGACY_" + fileConfiguration.getString(newPath) :
+                    itemMaterial = itemLegacy ? "LEGACY_" + fileConfiguration.getString(newPath) :
                             fileConfiguration.getString(newPath);
                     break;
                 case "name":
                     newPath = path + ".name";
-                    name = fileConfiguration.getString(newPath);
+                    itemName = fileConfiguration.getString(newPath);
                     break;
                 case "lore":
                     newPath = path + ".lore";
-                    lore = fileConfiguration.getStringList(newPath);
+                    itemLore = fileConfiguration.getStringList(newPath);
                     break;
                 case "amount":
                     newPath = path + ".amount";
-                    amount = fileConfiguration.getInt(newPath);
+                    itemAmount = fileConfiguration.getInt(newPath);
                     break;
                 case "metadata":
                     newPath = path + ".metadata";
-                    metadata = (short) fileConfiguration.getInt(newPath);
+                    itemMetadata = (short) fileConfiguration.getInt(newPath);
                     break;
                 case "glowing":
                     newPath = path + ".glowing";
-                    glowing = fileConfiguration.getBoolean(newPath);
+                    itemGlowing = fileConfiguration.getBoolean(newPath);
                     break;
                 default:
                     break;
             }
         }
-        return this.setMaterial(material)
-                .setName(name).setLore(lore)
-                .setAmount(amount).setMetaData(metadata)
-                .setGlowing(glowing);
+        return this.setMaterial(itemMaterial)
+                .setName(itemName).setLore(itemLore)
+                .setAmount(itemAmount).setMetaData(itemMetadata)
+                .setGlowing(itemGlowing);
     }
 
     /**
@@ -510,51 +505,54 @@ public class ItemBuilder {
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(Configuration configuration, String path) {
-        boolean legacy = false, glowing = false;
-        String newPath, material = "STONE", name = null;
-        List<String> lore = null;
-        int amount = 1;
-        short metadata = 0;
+        boolean itemLegacy = false;
+        boolean itemGlowing = false;
+        String newPath;
+        String itemMaterial = "STONE";
+        String itemName = null;
+        List<String> itemLore = null;
+        int itemAmount = 1;
+        short itemMetadata = 0;
 
         for (String s : configuration.getSection(path).getKeys()) {
             switch (s) {
                 case "legacy":
                     newPath = path + ".legacy";
-                    legacy = configuration.getBoolean(newPath);
+                    itemLegacy = configuration.getBoolean(newPath);
                     break;
                 case "material":
                     newPath = path + ".material";
-                    material = legacy ? "LEGACY_" + configuration.getString(newPath) :
+                    itemMaterial = itemLegacy ? "LEGACY_" + configuration.getString(newPath) :
                             configuration.getString(newPath);
                     break;
                 case "name":
                     newPath = path + ".name";
-                    name = configuration.getString(newPath);
+                    itemName = configuration.getString(newPath);
                     break;
                 case "lore":
                     newPath = path + ".lore";
-                    lore = configuration.getStringList(newPath);
+                    itemLore = configuration.getStringList(newPath);
                     break;
                 case "amount":
                     newPath = path + ".amount";
-                    amount = configuration.getInt(newPath);
+                    itemAmount = configuration.getInt(newPath);
                     break;
                 case "metadata":
                     newPath = path + ".metadata";
-                    metadata = (short) configuration.getInt(newPath);
+                    itemMetadata = (short) configuration.getInt(newPath);
                     break;
                 case "glowing":
                     newPath = path + ".glowing";
-                    glowing = configuration.getBoolean(newPath);
+                    itemGlowing = configuration.getBoolean(newPath);
                     break;
                 default:
                     break;
             }
         }
-        return this.setMaterial(material)
-                .setName(name).setLore(lore)
-                .setAmount(amount).setMetaData(metadata)
-                .setGlowing(glowing);
+        return this.setMaterial(itemMaterial)
+                .setName(itemName).setLore(itemLore)
+                .setAmount(itemAmount).setMetaData(itemMetadata)
+                .setGlowing(itemGlowing);
     }
 
     public ItemBuilder hex() {

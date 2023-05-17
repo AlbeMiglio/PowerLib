@@ -1,5 +1,5 @@
 # PowerLib
-[![Build Status](https://travis-ci.com/AlbeMiglio/PowerLib.svg?branch=master)](https://travis-ci.com/AlbeMiglio/PowerLib)
+[![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FAlbeMiglio%2Fjob%2FPowerLib%2F&color=bright-green)](https://ci.codemc.io/job/AlbeMiglio/job/PowerLib/)
 ![GitHub](https://img.shields.io/github/license/AlbeMiglio/PowerLib?color=bright-green&label=License)
 ![GitHub All Releases](https://img.shields.io/github/downloads/AlbeMiglio/PowerLib/total?color=brightgreen&label=Downloads)
 [![Discord](https://img.shields.io/discord/618742870035398684?logo=Join%20on%20Discord&label=Discord)](https://discord.gg/UMhsCZk)
@@ -23,7 +23,7 @@ PowerLib is a server-side user interface library for Spigot, BungeeCord and Velo
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>powerlib-<YOUR-PLATFORM></artifactId>
-  		<version>1.2.1</version>
+  		<version>1.2.4</version>
 		<scope>provided</scope>
 	    </dependency>
 	</dependencies>
@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.1'
+    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.4'
 }
 ```
 

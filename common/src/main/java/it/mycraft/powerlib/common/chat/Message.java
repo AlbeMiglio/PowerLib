@@ -2,132 +2,297 @@ package it.mycraft.powerlib.common.chat;
 
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import it.mycraft.powerlib.common.utils.ServerAPI;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.examination.Examinable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Message {
 
-    private String message;
-    private List<String> messages;
+
+    private static PlatformAudience platformAudience = null;
+    private Component singleLineMessage;
+    private List<Component> multiLineMessages;
+
+    static {
+        switch (ServerAPI.getType()) {
+            case BUKKIT:
+                platformAudience = new BukkitAudience();
+                break;
+            case BUNGEECORD:
+                platformAudience = new BungeeAudience();
+                break;
+            case VELOCITY:
+                platformAudience = new VelocityAudience();
+                break;
+            default:
+            case OTHER:
+                System.out.println("SEVERE ERROR! PowerLib is unable to find a server platform! Please contact an " +
+                        "administrator ASAP!");
+                break;
+        }
+    }
 
     public Message() {
-        this.message = "";
-        this.messages = new ArrayList<>();
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = new ArrayList<>();
     }
-    public Message(String message, boolean color) {
-        this.message = color ? ColorAPI.color(message) : message;
-        this.messages = new ArrayList<>();
+    public Message(String singleLineMessage, boolean color) {
+        this.singleLineMessage = Component.text(color ? ColorAPI.color(singleLineMessage) : singleLineMessage);
+        this.multiLineMessages = new ArrayList<>();
+
     }
 
-    public Message(String message) {
-        this(message, true);
+    public Message(String singleLineMessage) {
+        this(singleLineMessage, true);
     }
 
-    public Message(String... messages) {
-        this.message = "";
-        this.messages = new ArrayList<>(ColorAPI.color(Arrays.asList(messages)));
+    public Message(String... multiLineMessages) {
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = new ArrayList<>(ColorAPI.color(Arrays.asList(multiLineMessages))).stream().map(Component::text).collect(Collectors.toList());
     }
 
-    public Message(List<String> messages, boolean color) {
-        this.message = "";
-        this.messages = color ? new ArrayList<>(ColorAPI.color(messages)) : messages;
+    public Message(List<String> multiLineMessages, boolean color) {
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = (color ? new ArrayList<>(ColorAPI.color(multiLineMessages)) : multiLineMessages).stream().map(Component::text).collect(Collectors.toList());
     }
 
-    public Message(List<String> messages) {
-        this(messages, true);
+    public Message(List<String> multiLineMessages) {
+        this(multiLineMessages, true);
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        message = message.replace(placeholder, value.toString());
-        for(int i = 0; i < messages.size(); i++) {
-            String current = messages.get(i);
-            messages.set(i, current.replace(placeholder, value.toString()));
-        }
+        singleLineMessage = singleLineMessage.insertion(singleLineMessage.insertion().replace(placeholder, value.toString()));
+        multiLineMessages.replaceAll(s -> s.insertion(s.insertion().replace(placeholder, value.toString())));
         return this;
     }
 
     public Message set(String message) {
-        this.message = ColorAPI.color(message);
+        this.singleLineMessage = Component.text(ColorAPI.color(message));
         return this;
     }
 
     public Message set(List<String> messages) {
-        this.messages = ColorAPI.color(messages);
+        this.multiLineMessages = ColorAPI.color(messages).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message set(String... messages) {
-        this.messages = ColorAPI.color(Arrays.asList(messages));
+        this.multiLineMessages = ColorAPI.color(Arrays.asList(messages)).stream().map(Component::text).collect(Collectors.toList());
+        return this;
+    }
+
+    /**
+     * Adds a hover event in the ENTIRE message!
+     * @param event the adding hover event
+     * @return the message
+     */
+    public Message setHoverEvent(HoverEvent<Examinable> event) {
+        if(this.multiLineMessages.isEmpty()) {
+            this.singleLineMessage = this.singleLineMessage.hoverEvent(event);
+        }
+        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.hoverEvent(event)).collect(Collectors.toList());
+        return this;
+    }
+
+    /**
+     * Adds a click event in the ENTIRE message!
+     * @param event the adding click event
+     * @return the message
+     */
+    public Message setClickEvent(ClickEvent event) {
+        if(this.multiLineMessages.isEmpty()) {
+            this.singleLineMessage = this.singleLineMessage.clickEvent(event);
+        }
+        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.clickEvent(event)).collect(Collectors.toList());
+        return this;
+    }
+
+    /**
+     * Appends multiple components to a single-line message (useful for adding interactive component parts)
+     * @param components the components to append
+     * @return the final message
+     */
+    public Message append(Component... components) {
+        for(Component c : components) {
+            this.singleLineMessage = this.singleLineMessage.append(c);
+        }
+        return this;
+    }
+
+    public Message append(Message... messages) {
+        Arrays.stream(messages).map(m -> (Component[])
+                        (m.getComponentList().isEmpty() ? new Component[]{m.getComponent()} : m.getComponentList().toArray()))
+                .forEach(this::append);
+        return this;
+    }
+
+    /**
+     * Appends multiple messages to a Message (converting it in a multi-line message)
+     * @param lines an optional array of lines to append
+     * @return
+     */
+    public Message appendLines(Component... lines) {
+        if(this.singleLineMessage.insertion().equals("")) {
+            this.multiLineMessages.add(this.singleLineMessage);
+        }
+        this.multiLineMessages.addAll(Arrays.asList(lines));
+        return this;
+    }
+
+    public Message appendLines(Message... messages) {
+        Arrays.stream(messages).map(m -> (Component[])
+                        (m.getComponentList().isEmpty() ? new Component[]{m.getComponent()} : m.getComponentList().toArray()))
+                .forEach(this::appendLines);
         return this;
     }
 
     public String getText() {
-        return message;
+        return singleLineMessage.insertion();
     }
 
     public List<String> getTextList() {
-        return messages;
+        return multiLineMessages.stream().map(Component::insertion).collect(Collectors.toList());
     }
 
+    public Component getComponent() {
+        return singleLineMessage;
+    }
+
+    public List<Component> getComponentList() {
+        return multiLineMessages;
+    }
+
+    /**
+     * Enhanced and recommended version - doesn't use any reflection!
+     * @param audience the senders audience
+     */
+    public void send(Audience audience) {
+        if(multiLineMessages.isEmpty()) {
+            audience.sendMessage(singleLineMessage);
+        }
+        else {
+            this.multiLineMessages.forEach(audience::sendMessage);
+        }
+    }
+
+    /**
+     * Sends the message
+     * @param commandSender might be console, a Player, or a generic CommandSender
+     */
     public void send(Object commandSender) {
-        switch (ServerAPI.getType()) {
-            default:
-                break;
-            case BUKKIT:
-                if (messages.isEmpty())
-                    sendBukkitMessage(commandSender, message);
-                else
-                    messages.forEach((m) -> sendBukkitMessage(commandSender, m));
-                break;
-            case BUNGEECORD:
-                if (messages.isEmpty())
-                    sendBungeeMessage(commandSender, message);
-                else
-                    messages.forEach((m) -> sendBungeeMessage(commandSender, m));
-                break;
-            case VELOCITY:
-                if (messages.isEmpty())
-                    sendVelocityMessage(commandSender, message);
-                else
-                    messages.forEach((m) -> sendVelocityMessage(commandSender, m));
-                break;
+        Audience audience;
+        try {
+            audience = (Audience) platformAudience.getPlayerAudience().invoke(null, commandSender);
         }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(audience);
     }
 
+    /**
+     * Authorized players broadcast
+     * @param permission the required node
+     */
     public void broadcast(String permission) {
-        if (ServerAPI.isUsingBukkit()) {
-            broadcastBukkit(permission);
-        } else if (ServerAPI.isStrictlyUsingBungee()) {
-            broadcastBungee(permission);
-        } else if (ServerAPI.isUsingVelocity()) {
-            broadcastVelocity(permission);
+        Audience audience;
+        try {
+            audience = (Audience) platformAudience.getPermissionAudience().invoke(null, permission);
         }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(audience);
     }
 
+    /**
+     * Sends to Audience filtered by some conditions
+     * @param filter the filter
+     */
+    public void send(Predicate<Object> filter) {
+        Audience audience;
+        try {
+            audience = (Audience) platformAudience.getFilterAudience().invoke(null, filter);
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(audience);
+    }
+
+    /**
+     * Sends the message to the server Console
+     */
+    public void sendConsole() {
+        Audience console;
+        try {
+            console = (Audience) platformAudience.getConsoleAudience().invoke(null);
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(console);
+    }
+
+    /**
+     * Broadcast to all players! Console is NOT included in this audience
+     */
     public void broadcast() {
-        broadcast("");
+        Audience audience;
+        try {
+            audience = (Audience) platformAudience.getAllPlayersAudience().invoke(null);
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(audience);
+    }
+
+    /**
+     * Broadcast to everyone. Players and console, everything included.
+     */
+    public void sendAll() {
+        Audience audience;
+        try {
+            audience = (Audience) platformAudience.getAllAudience().invoke(null);
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            platformAudience.sendError();
+            return;
+        }
+        send(audience);
     }
 
     public Message color() { // no need by default
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.color(message);
-        } else this.messages = ColorAPI.color(messages);
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.color(singleLineMessage);
+        } else this.multiLineMessages = ColorAPI.color(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message decolor() {
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.decolor(message);
-        } else this.messages = ColorAPI.decolor(messages);
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.decolor(singleLineMessage);
+        } else this.multiLineMessages = ColorAPI.decolor(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message hex(String pre, String post) {
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.hex(message, pre, post);
-        } else this.messages = ColorAPI.hex(messages, pre, post);
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.hex(singleLineMessage, pre, post);
+        } else this.multiLineMessages = ColorAPI.hex(getTextList(), pre, post).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
@@ -137,108 +302,7 @@ public class Message {
     }
 
     private void reset() {
-        messages = new ArrayList<>();
-        message = null;
-    }
-
-    private void sendBukkitMessage(Object commandSender, String message) {
-        try {
-            Class<?> commandSenderClass = Class.forName("org.bukkit.command.CommandSender");
-            Method sendMessage = commandSenderClass.getDeclaredMethod("sendMessage", String.class);
-            sendMessage.invoke(commandSender, message);
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void broadcastBukkit(String permission) {
-        try {
-            Class<?> bukkitClass = Class.forName("org.bukkit.Bukkit");
-            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
-                if (permission.isEmpty()) {
-                    bukkitClass.getMethod("broadcastMessage", String.class).invoke(null, line);
-                } else bukkitClass.getMethod("broadcast", String.class, String.class)
-                        .invoke(null, line, permission);
-            }
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void sendBungeeMessage(Object commandSender, String message) {
-        try {
-            Class<?> commandSenderClass = Class.forName("net.md_5.bungee.api.CommandSender");
-            Method sendMessage = commandSenderClass.getMethod("sendMessage", String.class);
-            sendMessage.invoke(commandSender, message);
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void broadcastBungee(String permission) {
-        try {
-            Class<?> proxiedPlayerClass = Class.forName("net.md_5.bungee.api.connection.ProxiedPlayer");
-            Class<?> proxyServerClass = Class.forName("net.md_5.bungee.api.ProxyServer");
-            Object proxyServer = proxyServerClass.getMethod("getInstance").invoke(null);
-            Collection<Object> onlinePlayers = (Collection<Object>) proxyServerClass
-                    .getMethod("getPlayers").invoke(proxyServer);
-            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
-                if (permission.isEmpty()) {
-                    for (Object proxiedPlayer : onlinePlayers) {
-                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
-                    }
-                } else for (Object proxiedPlayer : onlinePlayers) {
-                    if ((boolean) proxiedPlayerClass.getMethod("hasPermission", String.class)
-                            .invoke(proxiedPlayer, permission)) {
-                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
-                    }
-                }
-            }
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void sendVelocityMessage(Object commandSender, String message) {
-        try {
-            Class<?> commandSenderClass = Class.forName("com.velocitypowered.api.command.CommandSource");
-            Class<?> componentClass = Class.forName("net.kyori.adventure.text.Component");
-            final Object component = componentClass.getMethod("text", String.class).invoke(null, message);
-            commandSenderClass.getMethod("sendMessage", componentClass).invoke(commandSender, component);
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void broadcastVelocity(String permission) {
-        try {
-            Class<?> proxiedPlayerClass = Class.forName("com.velocitypowered.api.proxy.Player");
-            Class<?> proxyServerClass = Class.forName("com.velocitypowered.api.proxy.ProxyServer");
-            Class<?> powerlibClass = Class.forName("it.mycraft.powerlib.velocity.PowerLib");
-            Object powerlib = powerlibClass.getMethod("getInstance").invoke(null);
-            Object proxyServer = powerlibClass.getMethod("getProxy").invoke(powerlib);
-            Collection<Object> onlinePlayers = (Collection<Object>) proxyServerClass
-                    .getMethod("getAllPlayers").invoke(proxyServer);
-            for (String line : messages.isEmpty() ? Collections.singletonList(message) : messages) {
-                if (permission.isEmpty()) {
-                    for (Object proxiedPlayer : onlinePlayers) {
-                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
-                    }
-                } else for (Object proxiedPlayer : onlinePlayers) {
-                    if ((boolean) proxiedPlayerClass.getMethod("hasPermission", String.class)
-                            .invoke(proxiedPlayer, permission)) {
-                        proxiedPlayer.getClass().getMethod("sendMessage", String.class).invoke(proxiedPlayer, line);
-                    }
-                }
-            }
-        } catch (ClassNotFoundException | NoSuchMethodException
-                | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        }
+        multiLineMessages = new ArrayList<>();
+        singleLineMessage = null;
     }
 }

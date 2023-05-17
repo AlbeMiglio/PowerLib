@@ -4,37 +4,36 @@ import com.google.common.base.Charsets;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Original fragments from bungeecord
+ *
  * @author md_5
  */
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class YamlConfiguration extends ConfigurationProvider {
 
     private final ThreadLocal<Yaml> yaml = ThreadLocal.withInitial(() -> {
-        Representer representer = new Representer() {
-            {
-                representers.put(Configuration.class, data -> represent(((Configuration) data).self));
-            }
-        };
-
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
-        return new Yaml(new Constructor(), representer, options);
+        YamlRepresenter representer = new YamlRepresenter(options);
+
+        return new Yaml(new Constructor(new LoaderOptions()), representer, options);
     });
 
     @Override
     public void save(Configuration config, File file) throws IOException {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), Charsets.UTF_8)) {
             save(config, writer);
         }
     }
