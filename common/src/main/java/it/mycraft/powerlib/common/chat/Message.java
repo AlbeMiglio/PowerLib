@@ -6,9 +6,9 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.examination.Examinable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,70 +17,74 @@ public class Message {
 
 
     private static PlatformAudience platformAudience = null;
-    private Component message;
-    private List<Component> messages;
+    private Component singleLineMessage;
+    private List<Component> multiLineMessages;
 
     static {
         switch (ServerAPI.getType()) {
             case BUKKIT:
                 platformAudience = new BukkitAudience();
+                break;
             case BUNGEECORD:
                 platformAudience = new BungeeAudience();
+                break;
             case VELOCITY:
                 platformAudience = new VelocityAudience();
+                break;
             default:
             case OTHER:
                 System.out.println("SEVERE ERROR! PowerLib is unable to find a server platform! Please contact an " +
                         "administrator ASAP!");
+                break;
         }
     }
 
     public Message() {
-        this.message = Component.text("");
-        this.messages = new ArrayList<>();
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = new ArrayList<>();
     }
-    public Message(String message, boolean color) {
-        this.message = Component.text(color ? ColorAPI.color(message) : message);
-        this.messages = new ArrayList<>();
+    public Message(String singleLineMessage, boolean color) {
+        this.singleLineMessage = Component.text(color ? ColorAPI.color(singleLineMessage) : singleLineMessage);
+        this.multiLineMessages = new ArrayList<>();
 
     }
 
-    public Message(String message) {
-        this(message, true);
+    public Message(String singleLineMessage) {
+        this(singleLineMessage, true);
     }
 
-    public Message(String... messages) {
-        this.message = Component.text("");
-        this.messages = new ArrayList<>(ColorAPI.color(Arrays.asList(messages))).stream().map(Component::text).collect(Collectors.toList());
+    public Message(String... multiLineMessages) {
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = new ArrayList<>(ColorAPI.color(Arrays.asList(multiLineMessages))).stream().map(Component::text).collect(Collectors.toList());
     }
 
-    public Message(List<String> messages, boolean color) {
-        this.message = Component.text("");
-        this.messages = (color ? new ArrayList<>(ColorAPI.color(messages)) : messages).stream().map(Component::text).collect(Collectors.toList());
+    public Message(List<String> multiLineMessages, boolean color) {
+        this.singleLineMessage = Component.text("");
+        this.multiLineMessages = (color ? new ArrayList<>(ColorAPI.color(multiLineMessages)) : multiLineMessages).stream().map(Component::text).collect(Collectors.toList());
     }
 
-    public Message(List<String> messages) {
-        this(messages, true);
+    public Message(List<String> multiLineMessages) {
+        this(multiLineMessages, true);
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        message = message.insertion(message.insertion().replace(placeholder, value.toString()));
-        messages.replaceAll(s -> s.insertion(s.insertion().replace(placeholder, value.toString())));
+        singleLineMessage = singleLineMessage.insertion(singleLineMessage.insertion().replace(placeholder, value.toString()));
+        multiLineMessages.replaceAll(s -> s.insertion(s.insertion().replace(placeholder, value.toString())));
         return this;
     }
 
     public Message set(String message) {
-        this.message = Component.text(ColorAPI.color(message));
+        this.singleLineMessage = Component.text(ColorAPI.color(message));
         return this;
     }
 
     public Message set(List<String> messages) {
-        this.messages = ColorAPI.color(messages).stream().map(Component::text).collect(Collectors.toList());
+        this.multiLineMessages = ColorAPI.color(messages).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message set(String... messages) {
-        this.messages = ColorAPI.color(Arrays.asList(messages)).stream().map(Component::text).collect(Collectors.toList());
+        this.multiLineMessages = ColorAPI.color(Arrays.asList(messages)).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
@@ -89,11 +93,11 @@ public class Message {
      * @param event the adding hover event
      * @return the message
      */
-    public Message setHoverEvent(HoverEvent event) {
-        if(this.messages.isEmpty()) {
-            this.message = this.message.hoverEvent(event);
+    public Message setHoverEvent(HoverEvent<Examinable> event) {
+        if(this.multiLineMessages.isEmpty()) {
+            this.singleLineMessage = this.singleLineMessage.hoverEvent(event);
         }
-        else this.messages = this.messages.stream().map(c -> c.hoverEvent(event)).collect(Collectors.toList());
+        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.hoverEvent(event)).collect(Collectors.toList());
         return this;
     }
 
@@ -103,10 +107,10 @@ public class Message {
      * @return the message
      */
     public Message setClickEvent(ClickEvent event) {
-        if(this.messages.isEmpty()) {
-            this.message = this.message.clickEvent(event);
+        if(this.multiLineMessages.isEmpty()) {
+            this.singleLineMessage = this.singleLineMessage.clickEvent(event);
         }
-        else this.messages = this.messages.stream().map(c -> c.clickEvent(event)).collect(Collectors.toList());
+        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.clickEvent(event)).collect(Collectors.toList());
         return this;
     }
 
@@ -117,7 +121,7 @@ public class Message {
      */
     public Message append(Component... components) {
         for(Component c : components) {
-            this.message = this.message.append(c);
+            this.singleLineMessage = this.singleLineMessage.append(c);
         }
         return this;
     }
@@ -135,10 +139,10 @@ public class Message {
      * @return
      */
     public Message appendLines(Component... lines) {
-        if(this.message.insertion().equals("")) {
-            this.messages.add(this.message);
+        if(this.singleLineMessage.insertion().equals("")) {
+            this.multiLineMessages.add(this.singleLineMessage);
         }
-        this.messages.addAll(Arrays.asList(lines));
+        this.multiLineMessages.addAll(Arrays.asList(lines));
         return this;
     }
 
@@ -150,19 +154,19 @@ public class Message {
     }
 
     public String getText() {
-        return message.insertion();
+        return singleLineMessage.insertion();
     }
 
     public List<String> getTextList() {
-        return messages.stream().map(Component::insertion).collect(Collectors.toList());
+        return multiLineMessages.stream().map(Component::insertion).collect(Collectors.toList());
     }
 
     public Component getComponent() {
-        return message;
+        return singleLineMessage;
     }
 
     public List<Component> getComponentList() {
-        return messages;
+        return multiLineMessages;
     }
 
     /**
@@ -170,11 +174,11 @@ public class Message {
      * @param audience the senders audience
      */
     public void send(Audience audience) {
-        if(messages.isEmpty()) {
-            audience.sendMessage(message);
+        if(multiLineMessages.isEmpty()) {
+            audience.sendMessage(singleLineMessage);
         }
         else {
-            this.messages.forEach(audience::sendMessage);
+            this.multiLineMessages.forEach(audience::sendMessage);
         }
     }
 
@@ -272,23 +276,23 @@ public class Message {
     }
 
     public Message color() { // no need by default
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.color(message);
-        } else this.messages = ColorAPI.color(getTextList()).stream().map(Component::text).collect(Collectors.toList());
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.color(singleLineMessage);
+        } else this.multiLineMessages = ColorAPI.color(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message decolor() {
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.decolor(message);
-        } else this.messages = ColorAPI.decolor(getTextList()).stream().map(Component::text).collect(Collectors.toList());
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.decolor(singleLineMessage);
+        } else this.multiLineMessages = ColorAPI.decolor(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message hex(String pre, String post) {
-        if (messages.isEmpty()) {
-            this.message = ColorAPI.hex(message, pre, post);
-        } else this.messages = ColorAPI.hex(getTextList(), pre, post).stream().map(Component::text).collect(Collectors.toList());
+        if (multiLineMessages.isEmpty()) {
+            this.singleLineMessage = ColorAPI.hex(singleLineMessage, pre, post);
+        } else this.multiLineMessages = ColorAPI.hex(getTextList(), pre, post).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
@@ -298,7 +302,7 @@ public class Message {
     }
 
     private void reset() {
-        messages = new ArrayList<>();
-        message = null;
+        multiLineMessages = new ArrayList<>();
+        singleLineMessage = null;
     }
 }

@@ -4,9 +4,10 @@ import java.lang.reflect.Method;
 
 public abstract class PlatformAudience {
 
-    public PlatformAudience() {
+    protected PlatformAudience() {
     }
 
+    protected String audienceAdapterClassName;
     protected Method playerAudience;
     protected Method consoleAudience;
     protected Method allPlayersAudience;

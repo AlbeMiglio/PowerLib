@@ -11,6 +11,10 @@ import java.util.function.Predicate;
 
 public class AudienceAdapter {
 
+    private AudienceAdapter() {
+
+    }
+
     private static final PowerLib powerLib = PowerLib.getInstance();
 
     public static Audience audience(CommandSender sender) {
