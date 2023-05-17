@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -41,7 +42,7 @@ public class BungeeConfigManager extends ConfigManager {
             }
         }
         catch(URISyntaxException ex) {
-            ex.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Error encountered during ConfigManager initialization!", ex);
         }
     }
 
@@ -89,7 +90,7 @@ public class BungeeConfigManager extends ConfigManager {
             ConfigurationProvider.getProvider(YamlConfiguration.class)
                     .save(config, new File(folder + "/" + file));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Error encountered during file saving!", ex);
         }
         this.put(file, config);
     }
@@ -126,7 +127,7 @@ public class BungeeConfigManager extends ConfigManager {
             return ConfigurationProvider.getProvider(YamlConfiguration.class)
                     .load(new File(folder + "/" + file));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Error encountered during file loading!", ex);
             return null;
         }
     }
@@ -164,8 +165,8 @@ public class BungeeConfigManager extends ConfigManager {
                             file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());
             }
-        } catch (IOException | ClassNotFoundException | URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException | URISyntaxException ex) {
+            plugin.getLogger().log(Level.SEVERE, "Error encountered during file initialization!", ex);
         }
     }
 

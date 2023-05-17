@@ -1,5 +1,7 @@
 package it.mycraft.powerlib.common.utils;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,10 @@ public class ColorAPI {
         return s.replace("&", "§");
     }
 
+    public static Component color(Component c) {
+        return Component.text(color(c.insertion()));
+    }
+
     /**
      * Colors a String with RGB Hex colors (1.16+ clients and servers only)
      * Usage: pre + hex code + post
@@ -30,7 +36,7 @@ public class ColorAPI {
     public static String hex(String string, String pre, String post) {
         final Pattern hexPattern = Pattern.compile(pre+"([A-Fa-f0-9]{6})"+post);
         Matcher matcher = hexPattern.matcher(string);
-        StringBuffer buffer = new StringBuffer(string.length() + 4 * 8);
+        StringBuilder buffer = new StringBuilder(string.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
             char COLOR_CHAR = '§';
@@ -41,6 +47,10 @@ public class ColorAPI {
             );
         }
         return matcher.appendTail(buffer).toString();
+    }
+
+    public static Component hex(Component component, String pre, String post) {
+        return Component.text(hex(component.insertion(), pre, post));
     }
 
     /**
@@ -54,6 +64,10 @@ public class ColorAPI {
         return hex(string, "&#", "");
     }
 
+    public static Component hex(Component component) {
+        return hex(component, "&#", "");
+    }
+
     /**
      * Colors a StringList with RGB Hex colors (1.16+ clients and servers only)
      *
@@ -61,7 +75,7 @@ public class ColorAPI {
      * @return  The colored stringlist
      */
     public static List<String> hex(List<String> l, String pre, String post) {
-        return l.stream().map((line -> hex(line, pre, post))).collect(Collectors.toList());
+        return l.stream().map(line -> hex(line, pre, post)).collect(Collectors.toList());
     }
 
     public static List<String> hex(List<String> l) {
@@ -77,6 +91,10 @@ public class ColorAPI {
     public static String decolor(String s) {
         return s == null ? null :
                 STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
+    }
+
+    public static Component decolor(Component c) {
+        return Component.text(decolor(c.insertion()));
     }
 
     /**

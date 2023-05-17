@@ -1,18 +1,27 @@
 package it.mycraft.powerlib.common.utils;
 
+import lombok.Getter;
+
 public class ServerAPI {
 
-    public static ServerType getType() {
+    @Getter
+    private static ServerType type;
+
+    static {
+        loadType();
+    }
+
+    private static void loadType() {
         if (isUsingBukkit()) {
-            return ServerType.BUKKIT;
+            type = ServerType.BUKKIT;
         }
         else if (isStrictlyUsingBungee()) {
-            return ServerType.BUNGEECORD;
+            type = ServerType.BUNGEECORD;
         }
         else if (isUsingVelocity()) {
-            return ServerType.VELOCITY;
+            type = ServerType.VELOCITY;
         }
-        else return ServerType.OTHER;
+        else type = ServerType.OTHER;
     }
 
     public static boolean isUsingBukkit() {
@@ -24,7 +33,7 @@ public class ServerAPI {
         }
     }
 
-    public static boolean isUsingBungee() {
+    public static boolean isUsingBungee() { // might throw wrong server types e.g. when using Snap inside Velocity
         try {
             Class.forName("net.md_5.bungee.api.ProxyServer");
             return true;
