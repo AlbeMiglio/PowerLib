@@ -4,6 +4,8 @@ import it.mycraft.powerlib.common.utils.ColorAPI;
 import it.mycraft.powerlib.common.utils.ServerAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.examination.Examinable;
@@ -12,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static net.kyori.adventure.text.Component.text;
 
 public class Message {
 
@@ -40,11 +44,11 @@ public class Message {
     }
 
     public Message() {
-        this.singleLineMessage = Component.text("");
+        this.singleLineMessage = text("");
         this.multiLineMessages = new ArrayList<>();
     }
     public Message(String singleLineMessage, boolean color) {
-        this.singleLineMessage = Component.text(color ? ColorAPI.color(singleLineMessage) : singleLineMessage);
+        this.singleLineMessage = text(color ? ColorAPI.color(singleLineMessage) : singleLineMessage);
         this.multiLineMessages = new ArrayList<>();
 
     }
@@ -54,12 +58,12 @@ public class Message {
     }
 
     public Message(String... multiLineMessages) {
-        this.singleLineMessage = Component.text("");
+        this.singleLineMessage = text("");
         this.multiLineMessages = new ArrayList<>(ColorAPI.color(Arrays.asList(multiLineMessages))).stream().map(Component::text).collect(Collectors.toList());
     }
 
     public Message(List<String> multiLineMessages, boolean color) {
-        this.singleLineMessage = Component.text("");
+        this.singleLineMessage = text("");
         this.multiLineMessages = (color ? new ArrayList<>(ColorAPI.color(multiLineMessages)) : multiLineMessages).stream().map(Component::text).collect(Collectors.toList());
     }
 
@@ -68,13 +72,15 @@ public class Message {
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        singleLineMessage = singleLineMessage.insertion(singleLineMessage.insertion().replace(placeholder, value.toString()));
-        multiLineMessages.replaceAll(s -> s.insertion(s.insertion().replace(placeholder, value.toString())));
+        singleLineMessage = singleLineMessage.replaceText(TextReplacementConfig.builder()
+                .matchLiteral(placeholder).replacement(value.toString()).build());
+        multiLineMessages.replaceAll(s -> s.replaceText(TextReplacementConfig.builder()
+                .matchLiteral(placeholder).replacement(value.toString()).build()));
         return this;
     }
 
     public Message set(String message) {
-        this.singleLineMessage = Component.text(ColorAPI.color(message));
+        this.singleLineMessage = text(ColorAPI.color(message));
         return this;
     }
 
@@ -139,7 +145,7 @@ public class Message {
      * @return
      */
     public Message appendLines(Component... lines) {
-        if(this.singleLineMessage.insertion().equals("")) {
+        if(this.singleLineMessage.insertion() != null) {
             this.multiLineMessages.add(this.singleLineMessage);
         }
         this.multiLineMessages.addAll(Arrays.asList(lines));

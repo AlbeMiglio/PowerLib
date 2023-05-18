@@ -1,6 +1,7 @@
 package it.mycraft.powerlib.common.utils;
 
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,7 +23,8 @@ public class ColorAPI {
     }
 
     public static Component color(Component c) {
-        return Component.text(color(c.insertion()));
+        if(c.insertion() == null) return c;
+        else return Component.text(color(c.insertion()));
     }
 
     /**
@@ -33,7 +35,8 @@ public class ColorAPI {
      * @param string The string to color
      * @return  The colored string
      */
-    public static String hex(String string, String pre, String post) {
+    public static String hex(@Nullable String string, String pre, String post) {
+        if(string == null || string.isEmpty()) return string;
         final Pattern hexPattern = Pattern.compile(pre+"([A-Fa-f0-9]{6})"+post);
         Matcher matcher = hexPattern.matcher(string);
         StringBuilder buffer = new StringBuilder(string.length() + 4 * 8);
@@ -50,6 +53,7 @@ public class ColorAPI {
     }
 
     public static Component hex(Component component, String pre, String post) {
+        if(component.insertion() == null) return component;
         return Component.text(hex(component.insertion(), pre, post));
     }
 
@@ -94,6 +98,7 @@ public class ColorAPI {
     }
 
     public static Component decolor(Component c) {
+        if(c.insertion() == null) return c;
         return Component.text(decolor(c.insertion()));
     }
 
