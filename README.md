@@ -8,7 +8,9 @@
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=AlbeMiglio_PowerLib&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=AlbeMiglio_PowerLib)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AlbeMiglio_PowerLib&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=AlbeMiglio_PowerLib)
 
-PowerLib is a server-side user interface library for Spigot, BungeeCord and Velocity servers.
+PowerLib is a server-side user interface library for Minecraft servers.
+
+Development builds are always available at: **https://ci.codemc.io/job/AlbeMiglio/job/PowerLib/**
 ## Importing with Maven/Gradle
 - To hook this library into your project with Maven, you just need to add to your pom.xml the repositories and dependencies below:
 ```
