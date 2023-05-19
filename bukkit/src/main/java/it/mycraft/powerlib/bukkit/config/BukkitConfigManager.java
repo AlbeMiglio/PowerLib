@@ -36,7 +36,7 @@ public class BukkitConfigManager extends ConfigManager {
         this.configs = new HashMap<>();
         try {
             serverJar = new File(JavaPlugin.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            pluginJar = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+            pluginJar = new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
             folder = this.plugin.getDataFolder();
             if (!folder.exists()) {
                 folder.mkdir();
