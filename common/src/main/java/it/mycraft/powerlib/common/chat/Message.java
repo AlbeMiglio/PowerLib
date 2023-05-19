@@ -21,8 +21,8 @@ public class Message {
 
 
     private static PlatformAudience platformAudience = null;
-    private Component singleLineMessage;
-    private List<Component> multiLineMessages;
+    private TextComponent singleLineMessage;
+    private List<TextComponent> multiLineMessages;
 
     static {
         switch (ServerAPI.getType()) {
@@ -72,10 +72,8 @@ public class Message {
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        singleLineMessage = singleLineMessage.replaceText(TextReplacementConfig.builder()
-                .matchLiteral(placeholder).replacement(value.toString()).build());
-        multiLineMessages.replaceAll(s -> s.replaceText(TextReplacementConfig.builder()
-                .matchLiteral(placeholder).replacement(value.toString()).build()));
+        singleLineMessage = text(singleLineMessage.content().replace(placeholder, value.toString()));
+        multiLineMessages.replaceAll(s -> text(s.content().replace(placeholder, value.toString())));
         return this;
     }
 
@@ -145,10 +143,10 @@ public class Message {
      * @return
      */
     public Message appendLines(Component... lines) {
-        if(this.singleLineMessage.insertion() != null) {
+        if(this.singleLineMessage != null) {
             this.multiLineMessages.add(this.singleLineMessage);
         }
-        this.multiLineMessages.addAll(Arrays.asList(lines));
+        this.multiLineMessages.addAll(Arrays.stream(lines).map(l -> (TextComponent) l).collect(Collectors.toList()));
         return this;
     }
 
@@ -160,11 +158,11 @@ public class Message {
     }
 
     public String getText() {
-        return singleLineMessage.insertion();
+        return singleLineMessage.content();
     }
 
     public List<String> getTextList() {
-        return multiLineMessages.stream().map(Component::insertion).collect(Collectors.toList());
+        return multiLineMessages.stream().map(TextComponent::content).collect(Collectors.toList());
     }
 
     public Component getComponent() {
@@ -172,7 +170,7 @@ public class Message {
     }
 
     public List<Component> getComponentList() {
-        return multiLineMessages;
+        return new ArrayList<>(multiLineMessages);
     }
 
     /**
@@ -283,21 +281,21 @@ public class Message {
 
     public Message color() { // no need by default
         if (multiLineMessages.isEmpty()) {
-            this.singleLineMessage = ColorAPI.color(singleLineMessage);
+            this.singleLineMessage = (TextComponent) ColorAPI.color(singleLineMessage);
         } else this.multiLineMessages = ColorAPI.color(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message decolor() {
         if (multiLineMessages.isEmpty()) {
-            this.singleLineMessage = ColorAPI.decolor(singleLineMessage);
+            this.singleLineMessage = (TextComponent) ColorAPI.decolor(singleLineMessage);
         } else this.multiLineMessages = ColorAPI.decolor(getTextList()).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message hex(String pre, String post) {
         if (multiLineMessages.isEmpty()) {
-            this.singleLineMessage = ColorAPI.hex(singleLineMessage, pre, post);
+            this.singleLineMessage = (TextComponent) ColorAPI.hex(singleLineMessage, pre, post);
         } else this.multiLineMessages = ColorAPI.hex(getTextList(), pre, post).stream().map(Component::text).collect(Collectors.toList());
         return this;
     }

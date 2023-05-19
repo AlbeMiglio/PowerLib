@@ -1,6 +1,7 @@
 package it.mycraft.powerlib.common.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -22,9 +23,8 @@ public class ColorAPI {
         return s.replace("&", "§");
     }
 
-    public static Component color(Component c) {
-        if(c.insertion() == null) return c;
-        else return Component.text(color(c.insertion()));
+    public static Component color(TextComponent c) {
+        return Component.text(color(c.content()));
     }
 
     /**
@@ -52,9 +52,8 @@ public class ColorAPI {
         return matcher.appendTail(buffer).toString();
     }
 
-    public static Component hex(Component component, String pre, String post) {
-        if(component.insertion() == null) return component;
-        return Component.text(hex(component.insertion(), pre, post));
+    public static Component hex(TextComponent component, String pre, String post) {
+        return Component.text(hex(component.content(), pre, post));
     }
 
     /**
@@ -68,7 +67,7 @@ public class ColorAPI {
         return hex(string, "&#", "");
     }
 
-    public static Component hex(Component component) {
+    public static Component hex(TextComponent component) {
         return hex(component, "&#", "");
     }
 
@@ -97,9 +96,8 @@ public class ColorAPI {
                 STRIP_COLOR_PATTERN.matcher(s).replaceAll("");
     }
 
-    public static Component decolor(Component c) {
-        if(c.insertion() == null) return c;
-        return Component.text(decolor(c.insertion()));
+    public static Component decolor(TextComponent c) {
+        return Component.text(decolor(c.content()));
     }
 
     /**
