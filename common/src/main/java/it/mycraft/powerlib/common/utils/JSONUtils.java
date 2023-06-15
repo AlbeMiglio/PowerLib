@@ -24,13 +24,10 @@ public class JSONUtils {
 
     public static boolean isValidJSON(String url) {
         try {
-            InputStream is = new URL(url).openStream();
-            try {
+            try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 read(rd);
                 return true;
-            } finally {
-                is.close();
             }
         } catch (IOException ignored) {
             return false;

@@ -90,12 +90,6 @@
             <artifactId>powerlib-common</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.md-5</groupId>
-                    <artifactId>bungeecord-chat</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
