@@ -41,8 +41,7 @@ public class BukkitConfigManager extends ConfigManager {
             if (!folder.exists()) {
                 folder.mkdir();
             }
-        }
-        catch(URISyntaxException ex) {
+        } catch (URISyntaxException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while creating ConfigManager! Please contact an administrator!");
         }
     }
@@ -158,7 +157,7 @@ public class BukkitConfigManager extends ConfigManager {
                 if (file.createNewFile()) {
                     replace = true;
                 }
-                if(file.length() == 0) {
+                if (file.length() == 0) {
                     replace = true;
                 }
                 if (replace) {
@@ -168,6 +167,8 @@ public class BukkitConfigManager extends ConfigManager {
             }
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while creating a yaml file! Please contact an administrator!");
+        } finally {
+
         }
     }
 
@@ -177,16 +178,15 @@ public class BukkitConfigManager extends ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) throws ClassNotFoundException, URISyntaxException, IOException {
-        ZipFile file = new ZipFile(pluginJar);
-        ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream());
-        boolean stop = false;
-        while(!stop) {
-            ZipEntry e = zip.getNextEntry();
-            if(e == null) {
-                stop = true;
-            }
-            else if(e.getName().equals(name)) {
-                return file.getInputStream(e);
+        try (ZipFile file = new ZipFile(pluginJar); ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream())) {
+            boolean stop = false;
+            while (!stop) {
+                ZipEntry e = zip.getNextEntry();
+                if (e == null) {
+                    stop = true;
+                } else if (e.getName().equals(name)) {
+                    return file.getInputStream(e);
+                }
             }
         }
         return null;

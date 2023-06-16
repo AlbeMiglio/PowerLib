@@ -176,16 +176,15 @@ public class VelocityConfigManager extends ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) throws ClassNotFoundException, URISyntaxException, IOException {
-        ZipFile file = new ZipFile(pluginJar);
-        ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream());
-        boolean stop = false;
-        while(!stop) {
-            ZipEntry e = zip.getNextEntry();
-            if(e == null) {
-                stop = true;
-            }
-            else if(e.getName().equals(name)) {
-                return file.getInputStream(e);
+        try (ZipFile file = new ZipFile(pluginJar); ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream())) {
+            boolean stop = false;
+            while (!stop) {
+                ZipEntry e = zip.getNextEntry();
+                if (e == null) {
+                    stop = true;
+                } else if (e.getName().equals(name)) {
+                    return file.getInputStream(e);
+                }
             }
         }
         return null;
