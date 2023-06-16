@@ -1,0 +1,4 @@
+#
+#   PowerLib v${project.version}
+#
+check-for-updates: true

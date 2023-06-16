@@ -14,35 +14,33 @@ public class AudienceAdapter {
 
     }
 
-    private static final PowerLib powerLib = PowerLib.getInstance();
-
     public static Audience audience(CommandSender sender) {
-        return powerLib.adventure().sender(sender);
+        return PowerLib.adventure().sender(sender);
     }
 
     public static Audience audience(ProxiedPlayer player) {
-        return powerLib.adventure().player(player);
+        return PowerLib.adventure().player(player);
     }
 
     public static Audience audience(String permission) {
-        return powerLib.adventure().permission(permission);
+        return PowerLib.adventure().permission(permission);
     }
 
-    public static Audience audience(Predicate<CommandSender> predicate) { return powerLib.adventure().filter(predicate); }
+    public static Audience audience(Predicate<CommandSender> predicate) { return PowerLib.adventure().filter(predicate); }
 
     public static Audience all() {
-        return powerLib.adventure().all();
+        return PowerLib.adventure().all();
     }
 
     public static Audience players() {
-        return powerLib.adventure().players();
+        return PowerLib.adventure().players();
     }
 
     public static Audience server(String serverName) {
-        return powerLib.adventure().server(serverName);
+        return PowerLib.adventure().server(serverName);
     }
 
     public static Audience console() {
-        return powerLib.adventure().console();
+        return PowerLib.adventure().console();
     }
 }

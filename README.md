@@ -25,7 +25,7 @@ Development builds are always available at: **https://ci.codemc.io/job/AlbeMigli
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>powerlib-<YOUR-PLATFORM></artifactId>
-  		<version>1.2.4</version>
+  		<version>1.2.5</version>
 		<scope>provided</scope>
 	    </dependency>
 	</dependencies>
@@ -53,7 +53,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.4'
+    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.5'
 }
 ```
 

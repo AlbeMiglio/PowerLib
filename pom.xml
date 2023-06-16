@@ -7,7 +7,7 @@
     <groupId>it.mycraft</groupId>
     <artifactId>powerlib</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -17,8 +17,11 @@
 
     <modules>
         <module>bukkit</module>
+        <module>bukkit-plugin</module>
         <module>bungee</module>
+        <module>bungee-plugin</module>
         <module>velocity</module>
+        <module>velocity-plugin</module>
         <module>common</module>
         <module>all</module>
     </modules>

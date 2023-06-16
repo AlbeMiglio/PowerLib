@@ -20,28 +20,9 @@ import static net.kyori.adventure.text.Component.text;
 public class Message {
 
 
-    private static PlatformAudience platformAudience = null;
+    private static final PlatformAudience platformAudience = Audiences.getPlatformAudience();
     private TextComponent singleLineMessage;
     private List<TextComponent> multiLineMessages;
-
-    static {
-        switch (ServerAPI.getType()) {
-            case BUKKIT:
-                platformAudience = new BukkitAudience();
-                break;
-            case BUNGEECORD:
-                platformAudience = new BungeeAudience();
-                break;
-            case VELOCITY:
-                platformAudience = new VelocityAudience();
-                break;
-            default:
-            case OTHER:
-                System.out.println("SEVERE ERROR! PowerLib is unable to find a server platform! Please contact an " +
-                        "administrator ASAP!");
-                break;
-        }
-    }
 
     public Message() {
         this.singleLineMessage = text("");
