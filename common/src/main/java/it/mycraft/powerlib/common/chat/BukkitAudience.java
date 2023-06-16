@@ -1,7 +1,5 @@
 package it.mycraft.powerlib.common.chat;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-
 public class BukkitAudience extends PlatformAudience {
 
     protected BukkitAudience() {

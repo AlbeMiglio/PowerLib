@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import it.mycraft.powerlib.bukkit.PowerLib;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
+import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import lombok.Getter;
@@ -279,7 +280,7 @@ public class ItemBuilder {
             profileField.setAccessible(true);
             profileField.set(skullMeta, profile);
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while creating an head with custom skin", ex);
+            new Message("Error while creating an head with custom skin!", "Message: " + ex.getMessage()).sendConsole();
             return null;
         }
 

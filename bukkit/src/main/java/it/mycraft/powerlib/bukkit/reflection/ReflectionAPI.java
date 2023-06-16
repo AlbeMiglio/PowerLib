@@ -1,6 +1,7 @@
 package it.mycraft.powerlib.bukkit.reflection;
 
 import it.mycraft.powerlib.bukkit.PowerLib;
+import it.mycraft.powerlib.common.chat.Message;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class ReflectionAPI {
         try {
             return Class.forName("net.minecraft.server." + version + "." + name);
         } catch (ClassNotFoundException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " NMS Class", ex);
+            new Message("Error while finding a " + name + " NMS Class!", ex.getMessage()).sendConsole();
             return null;
         }
     }
@@ -43,7 +44,7 @@ public class ReflectionAPI {
         try {
             return Class.forName(name);
         } catch (ClassNotFoundException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " Class", ex);
+            new Message("Error while finding a " + name + " Class!", ex.getMessage()).sendConsole();
             return null;
         }
     }
@@ -56,7 +57,7 @@ public class ReflectionAPI {
         try {
             return Class.forName("org.bukkit.craftbukkit." + version + "." + name);
         } catch (ClassNotFoundException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " OBC Class", ex);
+            new Message("Error while finding a " + name + " OBC Class!", ex.getMessage()).sendConsole();
             return null;
         }
     }
@@ -69,7 +70,7 @@ public class ReflectionAPI {
         try {
             return Class.forName("org.bukkit." + name);
         } catch (ClassNotFoundException ex) {
-            PowerLib.getInstance().getLogger().log(Level.WARNING, "Error while finding a " + name + " BC Class", ex);
+            new Message("Error while finding a " + name + " Bukkit Class!", ex.getMessage()).sendConsole();
             return null;
         }
     }
