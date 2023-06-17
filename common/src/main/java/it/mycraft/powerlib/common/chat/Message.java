@@ -53,8 +53,8 @@ public class Message {
     }
 
     public Message addPlaceHolder(String placeholder, Object value) {
-        singleLineMessage = text(singleLineMessage.content().replace(placeholder, value.toString()));
-        multiLineMessages.replaceAll(s -> text(s.content().replace(placeholder, value.toString())));
+        singleLineMessage = singleLineMessage.content(singleLineMessage.content().replace(placeholder, value.toString()));
+        multiLineMessages.replaceAll(s -> s.content(s.content().replace(placeholder, value.toString())));
         return this;
     }
 
