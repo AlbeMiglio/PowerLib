@@ -40,8 +40,7 @@ public class BungeeConfigManager extends ConfigManager {
             if (!folder.exists()) {
                 folder.mkdir();
             }
-        }
-        catch(URISyntaxException ex) {
+        } catch (URISyntaxException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error encountered during ConfigManager initialization!", ex);
         }
     }
@@ -157,13 +156,14 @@ public class BungeeConfigManager extends ConfigManager {
                 if (file.createNewFile()) {
                     replace = true;
                 }
-                if(file.length() == 0) {
+                if (file.length() == 0) {
                     replace = true;
                 }
                 if (replace) {
                     Files.copy(getResourceAsStream(source),
                             file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());
+                getResourceAsStream(source).close();
             }
         } catch (IOException | ClassNotFoundException | URISyntaxException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error encountered during file initialization!", ex);
@@ -176,15 +176,15 @@ public class BungeeConfigManager extends ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) throws ClassNotFoundException, URISyntaxException, IOException {
-        try (ZipFile file = new ZipFile(pluginJar); ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream())) {
-            boolean stop = false;
-            while (!stop) {
-                ZipEntry e = zip.getNextEntry();
-                if (e == null) {
-                    stop = true;
-                } else if (e.getName().equals(name)) {
-                    return file.getInputStream(e);
-                }
+        ZipFile file = new ZipFile(pluginJar);
+        ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream());
+        boolean stop = false;
+        while (!stop) {
+            ZipEntry e = zip.getNextEntry();
+            if (e == null) {
+                stop = true;
+            } else if (e.getName().equals(name)) {
+                return file.getInputStream(e);
             }
         }
         return null;
