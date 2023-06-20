@@ -6,9 +6,7 @@ import it.mycraft.powerlib.common.configuration.ConfigurationProvider;
 import it.mycraft.powerlib.common.configuration.YamlConfiguration;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -163,7 +161,6 @@ public class BungeeConfigManager extends ConfigManager {
                     Files.copy(getResourceAsStream(source),
                             file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());
-                getResourceAsStream(source).close();
             }
         } catch (IOException | ClassNotFoundException | URISyntaxException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error encountered during file initialization!", ex);
@@ -176,17 +173,29 @@ public class BungeeConfigManager extends ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) throws ClassNotFoundException, URISyntaxException, IOException {
-        ZipFile file = new ZipFile(pluginJar);
-        ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream());
-        boolean stop = false;
-        while (!stop) {
-            ZipEntry e = zip.getNextEntry();
-            if (e == null) {
-                stop = true;
-            } else if (e.getName().equals(name)) {
-                return file.getInputStream(e);
+        try (ZipFile file = new ZipFile(pluginJar);
+             ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream())) {
+            boolean stop = false;
+            while (!stop) {
+                ZipEntry e = zip.getNextEntry();
+                if (e == null) {
+                    stop = true;
+                } else if (e.getName().equals(name)) {
+                    return cloneInputStream(file.getInputStream(e));
+                }
             }
         }
         return null;
+    }
+
+    private InputStream cloneInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        byte[] byteArray = outputStream.toByteArray();
+        return new ByteArrayInputStream(byteArray);
     }
 }
