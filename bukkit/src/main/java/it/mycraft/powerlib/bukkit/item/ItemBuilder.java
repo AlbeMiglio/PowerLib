@@ -4,7 +4,6 @@ import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import it.mycraft.powerlib.bukkit.PowerLib;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
@@ -25,11 +24,10 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Getter
-public class ItemBuilder {
+public class ItemBuilder implements Cloneable {
 
     private Material material;
     private String name;
@@ -575,5 +573,19 @@ public class ItemBuilder {
         placeholders = new HashMap<>();
         amount = 1;
         metadata = 0;
+    }
+
+    @Override
+    public ItemBuilder clone() {
+        try {
+            ItemBuilder clone = (ItemBuilder) super.clone();
+            clone.enchantments = new HashMap<>(enchantments);
+            clone.potions = new HashMap<>(potions);
+            clone.placeholders = new HashMap<>(placeholders);
+            clone.lore = new ArrayList<>(lore);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
