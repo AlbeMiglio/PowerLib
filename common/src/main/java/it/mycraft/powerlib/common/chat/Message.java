@@ -1,17 +1,16 @@
 package it.mycraft.powerlib.common.chat;
 
 import it.mycraft.powerlib.common.utils.ColorAPI;
-import it.mycraft.powerlib.common.utils.ServerAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.examination.Examinable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,8 @@ public class Message {
     private static final PlatformAudience platformAudience = Audiences.getPlatformAudience();
     private TextComponent singleLineMessage;
     private List<TextComponent> multiLineMessages;
+    private HoverEvent<?> hoverEvent;
+    private ClickEvent clickEvent;
 
     public Message() {
         this.singleLineMessage = text("");
@@ -78,11 +79,8 @@ public class Message {
      * @param event the adding hover event
      * @return the message
      */
-    public Message setHoverEvent(HoverEvent<Examinable> event) {
-        if(this.multiLineMessages.isEmpty()) {
-            this.singleLineMessage = this.singleLineMessage.hoverEvent(event);
-        }
-        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.hoverEvent(event)).collect(Collectors.toList());
+    public Message setHoverEvent(HoverEvent<?> event) {
+        this.hoverEvent = event;
         return this;
     }
 
@@ -92,10 +90,7 @@ public class Message {
      * @return the message
      */
     public Message setClickEvent(ClickEvent event) {
-        if(this.multiLineMessages.isEmpty()) {
-            this.singleLineMessage = this.singleLineMessage.clickEvent(event);
-        }
-        else this.multiLineMessages = this.multiLineMessages.stream().map(c -> c.clickEvent(event)).collect(Collectors.toList());
+        this.clickEvent = event;
         return this;
     }
 
@@ -160,10 +155,10 @@ public class Message {
      */
     public void send(Audience audience) {
         if(multiLineMessages.isEmpty()) {
-            audience.sendMessage(singleLineMessage);
+            sendRawMessage(audience, singleLineMessage);
         }
         else {
-            this.multiLineMessages.forEach(audience::sendMessage);
+            this.multiLineMessages.forEach((msg) -> sendRawMessage(audience, msg));
         }
     }
 
@@ -277,13 +272,24 @@ public class Message {
     public Message hex(String pre, String post) {
         if (multiLineMessages.isEmpty()) {
             this.singleLineMessage = (TextComponent) ColorAPI.hex(singleLineMessage, pre, post);
-        } else this.multiLineMessages = ColorAPI.hex(getTextList(), pre, post).stream().map(Component::text).collect(Collectors.toList());
+        } else this.multiLineMessages = ColorAPI.hex(getTextList(), pre, post)
+                .stream().map(Component::text).collect(Collectors.toList());
         return this;
     }
 
     public Message hex() {
         this.hex("&#", "");
         return this;
+    }
+
+    private void sendRawMessage(Audience audience, Component component) {
+        if(this.hoverEvent != null) {
+            component = component.hoverEvent(this.hoverEvent);
+        }
+        if(this.clickEvent != null) {
+            component = component.clickEvent(this.clickEvent);
+        }
+        audience.sendMessage(component);
     }
 
     private void reset() {
