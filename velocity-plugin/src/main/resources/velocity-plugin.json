@@ -1,2 +1,2 @@
-{"id":"powerlib","name":"PowerLib","version":"1.2.9","authors":["AlbeMiglio","pompiere1"],
-  "dependencies":[],"main":"it.mycraft.powerlib.velocity.PowerLib"}
+{"id":"powerlib","name":"PowerLib","version":"1.2.9","authors":["AlbeMiglio","FranFrau"],
+  "dependencies":[],"main":"it.mycraft.powerlib.velocity.PowerLibPlugin"}
