@@ -61,7 +61,7 @@ public class BungeeConfigManager extends ConfigManager {
      * @return The new file
      */
     public Configuration create(String file, String source) {
-        File resourcePath = new File(folder + "/" + file);
+        File resourcePath = new File(folder + File.separator + file);
         if (!resourcePath.exists()) {
             createYAML(file, source, false);
         }
@@ -85,7 +85,7 @@ public class BungeeConfigManager extends ConfigManager {
         }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class)
-                    .save(config, new File(folder + "/" + file));
+                    .save(config, new File(folder + File.separator + file));
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error encountered during file saving!", ex);
         }
@@ -122,7 +122,7 @@ public class BungeeConfigManager extends ConfigManager {
     private Configuration load(String file) {
         try {
             return ConfigurationProvider.getProvider(YamlConfiguration.class)
-                    .load(new File(folder + "/" + file));
+                    .load(new File(folder + File.separator + file));
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error encountered during file loading!", ex);
             return null;
@@ -148,7 +148,7 @@ public class BungeeConfigManager extends ConfigManager {
      */
     private void createYAML(String resourcePath, String source, boolean replace) {
         try {
-            File file = new File(folder + "/" + resourcePath);
+            File file = new File(folder + File.separator + resourcePath);
             if (!file.getParentFile().exists() || !file.exists()) {
                 file.getParentFile().mkdir();
                 if (file.createNewFile()) {
