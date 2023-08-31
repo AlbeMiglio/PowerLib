@@ -1,5 +1,6 @@
 package it.mycraft.powerlib.bukkit.config;
 
+import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.ConfigManager;
 import it.mycraft.powerlib.common.configuration.Configuration;
 import it.mycraft.powerlib.common.configuration.ConfigurationProvider;
@@ -62,7 +63,7 @@ public class BukkitConfigManager extends ConfigManager {
      * @return The new file
      */
     public Configuration create(String file, String source) {
-        File resourcePath = new File(folder + "/" + file);
+        File resourcePath = new File(folder + File.separator + file);
         if (!resourcePath.exists()) {
             createYAML(file, source, false);
         }
@@ -86,7 +87,7 @@ public class BukkitConfigManager extends ConfigManager {
         }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class)
-                    .save(config, new File(folder + "/" + file));
+                    .save(config, new File(folder + File.separator + file));
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while saving a yaml file! Please contact an administrator!");
         }
@@ -123,7 +124,7 @@ public class BukkitConfigManager extends ConfigManager {
     private Configuration load(String file) {
         try {
             return ConfigurationProvider.getProvider(YamlConfiguration.class)
-                    .load(new File(folder + "/" + file));
+                    .load(new File(folder + File.separator + file));
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while loading a yaml file! Please contact an administrator!");
             return null;
@@ -149,9 +150,9 @@ public class BukkitConfigManager extends ConfigManager {
      */
     private void createYAML(String resourcePath, String source, boolean replace) {
         try {
-            File file = new File(folder + "/" + resourcePath);
+            File file = new File(folder + File.separator + resourcePath);
             if (!file.getParentFile().exists() || !file.exists()) {
-                file.getParentFile().mkdir();
+                file.getParentFile().mkdirs();
                 if (file.createNewFile()) {
                     replace = true;
                 }
@@ -159,12 +160,14 @@ public class BukkitConfigManager extends ConfigManager {
                     replace = true;
                 }
                 if (replace) {
-                    Files.copy(getResourceAsStream(source),
-                            file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(getResourceAsStream(source), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } else Files.copy(getResourceAsStream(source), file.toPath());
             }
         } catch (IOException | ClassNotFoundException | URISyntaxException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Exception encountered while creating a yaml file! Please contact an administrator!");
+            new Message("&cException encountered while creating a yaml file! Please contact an administrator!",
+                    "&cError message: %msg")
+                    .addPlaceHolder("%msg", e.getMessage())
+                    .sendConsole();
         }
     }
 
@@ -174,6 +177,7 @@ public class BukkitConfigManager extends ConfigManager {
 
 
     private InputStream getResourceAsStream(String name) throws ClassNotFoundException, URISyntaxException, IOException {
+
         try (ZipFile file = new ZipFile(pluginJar);
              ZipInputStream zip = new ZipInputStream(pluginJar.toURL().openStream())) {
             boolean stop = false;
@@ -181,7 +185,9 @@ public class BukkitConfigManager extends ConfigManager {
                 ZipEntry e = zip.getNextEntry();
                 if (e == null) {
                     stop = true;
-                } else if (e.getName().equals(name)) {
+                    continue;
+                }
+                if (e.getName().equals(name)) {
                     return cloneInputStream(file.getInputStream(e));
                 }
             }
