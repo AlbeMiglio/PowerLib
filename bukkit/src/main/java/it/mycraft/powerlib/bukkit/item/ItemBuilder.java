@@ -4,6 +4,7 @@ import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import it.mycraft.powerlib.bukkit.config.ConfigurationAdapter;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
@@ -32,9 +33,10 @@ public class ItemBuilder implements Cloneable {
     private Material material;
     private String name;
     private List<String> lore;
-    private int amount;
-    private short metadata;
-    private boolean glowing;
+    private int amount = 1;
+    private short metadata = 0;
+    private int customModelData = 0;
+    private boolean glowing = false;
     private HashMap<Enchantment, Integer> enchantments;
     private HashMap<PotionEffect, Boolean> potions;
     private HashMap<String, Object> placeholders;
@@ -44,8 +46,6 @@ public class ItemBuilder implements Cloneable {
         enchantments = new HashMap<>();
         potions = new HashMap<>();
         placeholders = new HashMap<>();
-        amount = 1;
-        metadata = 0;
     }
 
     /**
@@ -229,6 +229,11 @@ public class ItemBuilder implements Cloneable {
         return this;
     }
 
+    public ItemBuilder setCustomModelData(int customModelData) {
+        this.customModelData = customModelData;
+        return this;
+    }
+
     /**
      * Clones another itemstack into the builder and stores its data
      *
@@ -351,7 +356,7 @@ public class ItemBuilder implements Cloneable {
      */
     public ItemStack build() {
         for(String placeholder : placeholders.keySet()) {
-            Object value = placeholders.get(placeholder);
+            Object value = placeholders.getOrDefault(placeholder, "NULL");
             setName(name.replace(placeholder, value.toString()));
 
             setLore(lore.stream().map((s) -> s.replace(placeholder, value.toString()))
@@ -376,6 +381,10 @@ public class ItemBuilder implements Cloneable {
             for (Enchantment enchantment : enchantments.keySet()) {
                 itemMeta.addEnchant(enchantment, enchantments.get(enchantment), true);
             }
+        }
+
+        if(customModelData != 0) {
+            itemMeta.setCustomModelData(customModelData);
         }
 
         itemStack.setItemMeta(itemMeta);
@@ -446,54 +455,7 @@ public class ItemBuilder implements Cloneable {
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(FileConfiguration fileConfiguration, String path) {
-        boolean itemLegacy = false;
-        boolean itemGlowing = false;
-        String newPath;
-        String itemMaterial = "STONE";
-        String itemName = null;
-        List<String> itemLore = null;
-        int itemAmount = 1;
-        short itemMetadata = 0;
-
-        for (String s : fileConfiguration.getConfigurationSection(path).getKeys(false)) {
-            switch (s) {
-                case "legacy":
-                    newPath = path + ".legacy";
-                    itemLegacy = fileConfiguration.getBoolean(newPath);
-                    break;
-                case "material":
-                    newPath = path + ".material";
-                    itemMaterial = itemLegacy ? "LEGACY_" + fileConfiguration.getString(newPath) :
-                            fileConfiguration.getString(newPath);
-                    break;
-                case "name":
-                    newPath = path + ".name";
-                    itemName = fileConfiguration.getString(newPath);
-                    break;
-                case "lore":
-                    newPath = path + ".lore";
-                    itemLore = fileConfiguration.getStringList(newPath);
-                    break;
-                case "amount":
-                    newPath = path + ".amount";
-                    itemAmount = fileConfiguration.getInt(newPath);
-                    break;
-                case "metadata":
-                    newPath = path + ".metadata";
-                    itemMetadata = (short) fileConfiguration.getInt(newPath);
-                    break;
-                case "glowing":
-                    newPath = path + ".glowing";
-                    itemGlowing = fileConfiguration.getBoolean(newPath);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return this.setMaterial(itemMaterial)
-                .setName(itemName).setLore(itemLore)
-                .setAmount(itemAmount).setMetaData(itemMetadata)
-                .setGlowing(itemGlowing);
+        return fromConfig(ConfigurationAdapter.adapt(fileConfiguration), path);
     }
 
     /**
@@ -511,6 +473,7 @@ public class ItemBuilder implements Cloneable {
         String itemName = null;
         List<String> itemLore = null;
         int itemAmount = 1;
+        int customModelData = 0;
         short itemMetadata = 0;
 
         for (String s : configuration.getSection(path).getKeys()) {
@@ -544,6 +507,9 @@ public class ItemBuilder implements Cloneable {
                     newPath = path + ".glowing";
                     itemGlowing = configuration.getBoolean(newPath);
                     break;
+                case "customModelData":
+                    newPath = path + ".customModelData";
+                    customModelData = configuration.getInt(newPath);
                 default:
                     break;
             }
@@ -551,6 +517,7 @@ public class ItemBuilder implements Cloneable {
         return this.setMaterial(itemMaterial)
                 .setName(itemName).setLore(itemLore)
                 .setAmount(itemAmount).setMetaData(itemMetadata)
+                .setCustomModelData(customModelData)
                 .setGlowing(itemGlowing);
     }
 
