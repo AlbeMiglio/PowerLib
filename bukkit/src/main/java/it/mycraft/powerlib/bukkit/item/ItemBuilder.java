@@ -90,9 +90,13 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(String material) {
-        Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material);
-        if (optMaterial.isPresent())
-            this.material = optMaterial.get().toString();
+        if (!material.startsWith("itemsadder:")) {
+            Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material);
+            if (optMaterial.isPresent())
+                this.material = optMaterial.get().toString();
+        } else {
+            this.material = material;
+        }
         return this;
     }
 
@@ -400,13 +404,15 @@ public class ItemBuilder implements Cloneable {
     public ItemStack build() {
         for (String placeholder : placeholders.keySet()) {
             Object value = placeholders.getOrDefault(placeholder, "NULL");
-            setName(name.replace(placeholder, value.toString()));
+            setName(this.name.replace(placeholder, value.toString()));
 
-            setLore(lore.stream().map((s) -> s.replace(placeholder, value.toString()))
+            setLore(this.lore.stream().map((s) -> s.replace(placeholder, value.toString()))
                     .collect(Collectors.toList()));
         }
+        String name = this.name;
+        List<String> lore = this.lore == null ? null : new ArrayList<>(this.lore);
         if (material.startsWith("itemsadder:")) {
-            String customItem = material.split(":")[1];
+            String customItem = material.replace("itemsadder:", "");
             if (usingItemsAdder && ItemsAdder.isCustomItem(customItem)) {
                 this.clone(ItemsAdder.getCustomItem(customItem));
             } else material = "BARRIER";
@@ -584,7 +590,8 @@ public class ItemBuilder implements Cloneable {
             }
         }
         return this.setMaterial(itemMaterial)
-                .setName(itemName).setLore(itemLore)
+                .setName(itemName)
+                .setLore(itemLore)
                 .setAmount(itemAmount).setMetaData(itemMetadata)
                 .setCustomModelData(customModelData)
                 .setGlowing(itemGlowing);

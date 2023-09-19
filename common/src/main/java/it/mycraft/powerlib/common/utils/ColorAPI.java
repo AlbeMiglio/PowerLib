@@ -20,10 +20,12 @@ public class ColorAPI {
      * @return  The colored string
      */
     public static String color(String s) {
+        if(s == null || s.isEmpty()) return s;
         return s.replace("&", "§");
     }
 
     public static Component color(TextComponent c) {
+        if(c == null || c.content().isEmpty()) return c;
         return Component.text(color(c.content()));
     }
 
@@ -78,6 +80,7 @@ public class ColorAPI {
      * @return  The colored stringlist
      */
     public static List<String> hex(List<String> l, String pre, String post) {
+        if(l == null || l.isEmpty()) return l;
         return l.stream().map(line -> hex(line, pre, post)).collect(Collectors.toList());
     }
 
@@ -97,6 +100,7 @@ public class ColorAPI {
     }
 
     public static Component decolor(TextComponent c) {
+        if(c == null || c.content().isEmpty()) return c;
         return Component.text(decolor(c.content()));
     }
 
@@ -107,6 +111,7 @@ public class ColorAPI {
      * @return The colored list
      */
     public static List<String> color(List<String> list) {
+        if(list == null || list.isEmpty()) return list;
         return list.stream().map(ColorAPI::color).collect(Collectors.toList());
     }
 
@@ -117,6 +122,7 @@ public class ColorAPI {
      * @return The unformatted list
      */
     public static List<String> decolor(List<String> list) {
+        if(list == null || list.isEmpty()) return list;
         return list.stream().map(ColorAPI::decolor).collect(Collectors.toList());
     }
 }
