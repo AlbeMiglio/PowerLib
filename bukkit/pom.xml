@@ -5,7 +5,7 @@
     <parent>
         <groupId>it.mycraft</groupId>
         <artifactId>powerlib</artifactId>
-        <version>1.2.11</version>
+        <version>1.2.12</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,6 +30,10 @@
             <id>paper</id>
             <url>https://papermc.io/repo/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>jitpack-repo</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -49,6 +53,12 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>2.3.31</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.5.0c-r5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
