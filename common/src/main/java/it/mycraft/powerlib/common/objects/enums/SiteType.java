@@ -1,4 +1,4 @@
-package it.mycraft.powerlib.common.enums;
+package it.mycraft.powerlib.common.objects.enums;
 
 public enum SiteType {
 

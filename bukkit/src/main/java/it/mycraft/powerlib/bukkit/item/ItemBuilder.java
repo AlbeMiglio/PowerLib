@@ -4,14 +4,18 @@ import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import dev.lone.itemsadder.api.ItemsAdder;
 import it.mycraft.powerlib.bukkit.config.ConfigurationAdapter;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
 import it.mycraft.powerlib.common.chat.Message;
 import it.mycraft.powerlib.common.configuration.Configuration;
+import it.mycraft.powerlib.common.objects.Pair;
 import it.mycraft.powerlib.common.utils.ColorAPI;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -20,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -27,25 +32,44 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Getter
+
 public class ItemBuilder implements Cloneable {
 
-    private Material material;
+    private static boolean usingItemsAdder = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder");
+    @Getter
+    private String material;
+    @Getter
     private String name;
+    @Getter
     private List<String> lore;
+    @Getter
     private int amount = 1;
+    @Getter
     private short metadata = 0;
+    @Getter
     private int customModelData = 0;
+    @Getter
     private boolean glowing = false;
+    @Getter
     private HashMap<Enchantment, Integer> enchantments;
+    @Getter
     private HashMap<PotionEffect, Boolean> potions;
+    @Getter
     private HashMap<String, Object> placeholders;
+    private SkullMeta skullMeta;
+
+    /**
+     * @since 1.2.11
+     */
+    @Getter
+    private HashMap<String, Pair<PersistentDataType, Object>> NBT;
 
     public ItemBuilder() {
         lore = new ArrayList<>();
         enchantments = new HashMap<>();
         potions = new HashMap<>();
         placeholders = new HashMap<>();
+        NBT = new HashMap<>();
     }
 
     /**
@@ -55,7 +79,7 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(Material material) {
-        this.material = material;
+        this.material = material.toString();
         return this;
     }
 
@@ -68,7 +92,7 @@ public class ItemBuilder implements Cloneable {
     public ItemBuilder setMaterial(String material) {
         Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material);
         if (optMaterial.isPresent())
-            this.material = optMaterial.get();
+            this.material = optMaterial.get().toString();
         return this;
     }
 
@@ -79,7 +103,7 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id) {
-        this.material = LegacyItemAPI.getMaterial(id);
+        this.material = LegacyItemAPI.getMaterial(id).toString();
         return this;
     }
 
@@ -91,7 +115,7 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(int id, int data) {
-        this.material = LegacyItemAPI.getMaterial(id, data);
+        this.material = LegacyItemAPI.getMaterial(id, data).toString();
         return this;
     }
 
@@ -242,20 +266,46 @@ public class ItemBuilder implements Cloneable {
      */
     public ItemBuilder clone(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        material = itemStack.getType();
+        material = itemStack.getType().toString();
         amount = itemStack.getAmount();
         metadata = itemStack.getDurability();
 
-        if (itemMeta != null) {
-            name = itemMeta.getDisplayName();
+        if (itemMeta == null) {
+            material = "AIR";
+            name = null;
+            lore.clear();
+            enchantments.clear();
+            potions.clear();
+            placeholders.clear();
+            return this;
         }
 
+        name = itemMeta.getDisplayName();
         if (itemMeta.hasLore())
             lore = itemMeta.getLore();
 
         if (itemMeta.hasEnchants() && itemMeta.getItemFlags().contains(ItemFlag.HIDE_ENCHANTS))
             glowing = true;
 
+        if (itemMeta.hasCustomModelData()) {
+            customModelData = itemMeta.getCustomModelData();
+        }
+
+        if (itemMeta instanceof PotionMeta) {
+            PotionMeta potionMeta = (PotionMeta) itemMeta;
+            for (PotionEffect potionEffect : potionMeta.getCustomEffects()) {
+                potions.put(potionEffect, true);
+            }
+        }
+
+        for (NamespacedKey key : itemMeta.getPersistentDataContainer().getKeys()) {
+            for (PersistentDataType type : PersistentDataTypes.values()) {
+                if (itemMeta.getPersistentDataContainer().has(key, type)) {
+                    Object value = itemMeta.getPersistentDataContainer().get(key, type);
+                    NBT.put(key.toString(), new Pair<>(type, value));
+                }
+            }
+        }
         return this;
     }
 
@@ -294,26 +344,19 @@ public class ItemBuilder implements Cloneable {
     /**
      * Sets a player's skin to a skull
      *
-     * @param itemBuilder The itemBuilder
-     * @param playerName  The player name
+     * @param uuid The player's uuid
      * @return The skull with a player skin
      */
-    private ItemStack setPlayerSkin(ItemBuilder itemBuilder, String playerName) {
+    private ItemBuilder setPlayerSkin(UUID uuid) {
         int version = ReflectionAPI.getNumericalVersion();
-        String material = version >= 13 ? "PLAYER_HEAD" : "SKULL_ITEM";
-        ItemStack skull = itemBuilder
-                .setMaterial(material)
-                .setAmount(1)
-                .setMetaData((short) 3)
-                .setName(name)
-                .setLore(lore)
-                .build();
+        material = version >= 13 ? "PLAYER_HEAD" : "SKULL_ITEM";
+        amount = 1;
+        metadata = (short) 3;
 
-        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwner(playerName);
-        skull.setItemMeta(skullMeta);
-
-        return skull;
+        SkullMeta skullMeta = (SkullMeta) new ItemStack(Material.getMaterial(material)).getItemMeta();
+        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
+        this.skullMeta = skullMeta;
+        return this;
     }
 
     /**
@@ -355,14 +398,24 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemStack
      */
     public ItemStack build() {
-        for(String placeholder : placeholders.keySet()) {
+        for (String placeholder : placeholders.keySet()) {
             Object value = placeholders.getOrDefault(placeholder, "NULL");
             setName(name.replace(placeholder, value.toString()));
 
             setLore(lore.stream().map((s) -> s.replace(placeholder, value.toString()))
                     .collect(Collectors.toList()));
         }
-        ItemStack itemStack = new ItemStack(material, amount, metadata);
+        if (material.startsWith("itemsadder:")) {
+            String customItem = material.split(":")[1];
+            if (usingItemsAdder && ItemsAdder.isCustomItem(customItem)) {
+                this.clone(ItemsAdder.getCustomItem(customItem));
+            } else material = "BARRIER";
+        }
+        Material m = Material.getMaterial(material);
+        ItemStack itemStack = new ItemStack(m, amount, metadata);
+
+        if (m.isAir())
+            return itemStack;
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -383,13 +436,19 @@ public class ItemBuilder implements Cloneable {
             }
         }
 
-        if(customModelData != 0) {
+        if (customModelData != 0) {
             itemMeta.setCustomModelData(customModelData);
         }
 
+        NBT.entrySet().forEach((entry) -> {
+            itemMeta.getPersistentDataContainer()
+                    .set(NamespacedKey.fromString(entry.getKey()),
+                            entry.getValue().getLeft(), entry.getValue().getRight());
+        });
+
         itemStack.setItemMeta(itemMeta);
 
-        if (material == Material.POTION && !potions.isEmpty()) {
+        if (m == Material.POTION && !potions.isEmpty()) {
             PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
             for (PotionEffect potionEffect : potions.keySet()) {
                 potionMeta.addCustomEffect(potionEffect, potions.get(potionEffect));
@@ -431,8 +490,18 @@ public class ItemBuilder implements Cloneable {
      * @param playerName The player name
      * @return The ItemStack
      */
-    public ItemStack playerHeadBuild(String playerName) {
-        return setPlayerSkin(this, playerName);
+    public ItemBuilder setPlayerHead(String playerName) {
+        return setPlayerSkin(Bukkit.getOfflinePlayer(playerName).getUniqueId());
+    }
+
+    /**
+     * Uses the player's uuid to make a player skull
+     *
+     * @param uuid
+     * @return The ItemStack
+     */
+    public ItemBuilder setPlayerHead(UUID uuid) {
+        return setPlayerSkin(uuid);
     }
 
     /**
@@ -462,7 +531,7 @@ public class ItemBuilder implements Cloneable {
      * Looks for any item's info in the provided NATIVE Configuration and builds an ItemStack from it
      *
      * @param configuration NATIVE CONFIGURATION to get the item's info from
-     * @param path              The section where the item's info are stored
+     * @param path          The section where the item's info are stored
      * @return The related ItemBuilder
      */
     public ItemBuilder fromConfig(Configuration configuration, String path) {
@@ -531,7 +600,7 @@ public class ItemBuilder implements Cloneable {
      * Just puts in the ItemBuilder object its default values
      */
     private void reset() {
-        material = Material.STONE;
+        material = "STONE";
         name = "";
         glowing = false;
         lore = new ArrayList<>();

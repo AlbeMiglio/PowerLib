@@ -1,6 +1,6 @@
 package it.mycraft.powerlib.bungee.updater;
 
-import it.mycraft.powerlib.common.enums.SiteType;
+import it.mycraft.powerlib.common.objects.enums.SiteType;
 import it.mycraft.powerlib.common.utils.JSONUtils;
 import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;

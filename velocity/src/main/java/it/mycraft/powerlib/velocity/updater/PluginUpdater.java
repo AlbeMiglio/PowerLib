@@ -1,6 +1,6 @@
 package it.mycraft.powerlib.velocity.updater;
 
-import it.mycraft.powerlib.common.enums.SiteType;
+import it.mycraft.powerlib.common.objects.enums.SiteType;
 import it.mycraft.powerlib.common.utils.JSONUtils;
 import lombok.Getter;
 import lombok.Setter;
