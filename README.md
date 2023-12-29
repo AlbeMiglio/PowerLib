@@ -30,7 +30,7 @@ Development builds are always available at: **https://ci.codemc.io/job/AlbeMigli
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>powerlib-<YOUR-PLATFORM></artifactId>
-  		<version>1.2.12</version>
+  		<version>1.2.13-SNAPSHOT</version>
 		<scope>provided</scope>
 	    </dependency>
 	</dependencies>
@@ -61,7 +61,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.12'
+    compileOnly 'it.mycraft:powerlib-<YOUR-PLATFORM>:1.2.13-SNAPSHOT'
 }
 ```
 
@@ -82,7 +82,7 @@ your plugin and rename its packages:
 	    <dependency>
   		<groupId>it.mycraft</groupId>
   		<artifactId>powerlib-<YOUR-PLATFORM></artifactId>
-  		<version>1.2.12</version>
+  		<version>1.2.13-SNAPSHOT</version>
 		<scope>compile</scope>
 	    </dependency>
 	</dependencies>
