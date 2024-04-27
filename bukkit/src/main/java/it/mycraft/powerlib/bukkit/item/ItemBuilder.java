@@ -80,6 +80,18 @@ public class ItemBuilder implements Cloneable {
     }
 
     /**
+     * Adds a custom NBT tag to the item
+     *
+     * @param type  The PersistentDataType
+     * @param key   The key
+     * @param value The value
+     */
+    public <V> ItemBuilder addPersistentValue(PersistentDataType<?, V> type, String key, V value) {
+        NBT.put(key, new Pair<>(type, value));
+        return this;
+    }
+
+    /**
      * Sets the item's material getting it from a String
      *
      * @param material The material
