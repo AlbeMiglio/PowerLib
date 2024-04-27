@@ -1,10 +1,11 @@
 package it.mycraft.powerlib.bukkit.item;
 
 import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import dev.lone.itemsadder.api.ItemsAdder;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import dev.lone.itemsadder.api.CustomStack;
 import it.mycraft.powerlib.bukkit.config.ConfigurationAdapter;
 import it.mycraft.powerlib.bukkit.reflection.ReflectionAPI;
 import it.mycraft.powerlib.common.chat.Message;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class ItemBuilder implements Cloneable {
 
-    private static boolean usingItemsAdder = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder");
+    public static boolean isUsingItemsAdder() { return Bukkit.getPluginManager().isPluginEnabled("ItemsAdder"); }
     @Getter
     private String material;
     @Getter
@@ -57,19 +58,14 @@ public class ItemBuilder implements Cloneable {
     @Getter
     private HashMap<String, Object> placeholders;
     private SkullMeta skullMeta;
-
-    /**
-     * @since 1.2.11
-     */
-    @Getter
-    private HashMap<String, Pair<PersistentDataType, Object>> NBT;
+    private Pair<Optional<String>, Optional<String>> itemsAdderData;
 
     public ItemBuilder() {
         lore = new ArrayList<>();
         enchantments = new HashMap<>();
         potions = new HashMap<>();
         placeholders = new HashMap<>();
-        NBT = new HashMap<>();
+        itemsAdderData = new Pair<>(Optional.empty(), Optional.empty());
     }
 
     /**
@@ -91,7 +87,7 @@ public class ItemBuilder implements Cloneable {
      */
     public ItemBuilder setMaterial(String material) {
         if (!material.startsWith("itemsadder:")) {
-            Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material);
+            Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material).toJavaUtil();
             if (optMaterial.isPresent())
                 this.material = optMaterial.get().toString();
         } else {
@@ -159,7 +155,7 @@ public class ItemBuilder implements Cloneable {
     /**
      * Sets the item's enchantment
      *
-     * @param enchantment The enchant
+     * @param enchantment The enchantment
      * @param level       The level
      * @return The ItemBuilder
      */
@@ -269,6 +265,10 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder clone(ItemStack itemStack) {
+        if(itemStack == null || itemStack.getType() == Material.AIR) {
+            return this;
+        }
+
         ItemMeta itemMeta = itemStack.getItemMeta();
         material = itemStack.getType().toString();
         amount = itemStack.getAmount();
@@ -302,13 +302,10 @@ public class ItemBuilder implements Cloneable {
             }
         }
 
-        for (NamespacedKey key : itemMeta.getPersistentDataContainer().getKeys()) {
-            for (PersistentDataType type : PersistentDataTypes.values()) {
-                if (itemMeta.getPersistentDataContainer().has(key, type)) {
-                    Object value = itemMeta.getPersistentDataContainer().get(key, type);
-                    NBT.put(key.toString(), new Pair<>(type, value));
-                }
-            }
+        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTCompound comp = nbtItem.getCompound("itemsadder");
+        if(isUsingItemsAdder() && comp != null) {
+            itemsAdderData = new Pair<>(Optional.ofNullable(comp.getString("namespace")), Optional.ofNullable(comp.getString("id")));
         }
         return this;
     }
@@ -411,10 +408,10 @@ public class ItemBuilder implements Cloneable {
         }
         String name = this.name;
         List<String> lore = this.lore == null ? null : new ArrayList<>(this.lore);
-        if (material.startsWith("itemsadder:")) {
+        if (material.startsWith("itemsadder:") && isUsingItemsAdder()) {
             String customItem = material.replace("itemsadder:", "");
-            if (usingItemsAdder && ItemsAdder.isCustomItem(customItem)) {
-                this.clone(ItemsAdder.getCustomItem(customItem));
+            if (CustomStack.isInRegistry(customItem)) {
+                this.clone(CustomStack.getInstance(customItem).getItemStack());
             } else material = "BARRIER";
         }
         Material m = Material.getMaterial(material);
@@ -446,12 +443,6 @@ public class ItemBuilder implements Cloneable {
             itemMeta.setCustomModelData(customModelData);
         }
 
-        NBT.entrySet().forEach((entry) -> {
-            itemMeta.getPersistentDataContainer()
-                    .set(NamespacedKey.fromString(entry.getKey()),
-                            entry.getValue().getLeft(), entry.getValue().getRight());
-        });
-
         itemStack.setItemMeta(itemMeta);
 
         if (m == Material.POTION && !potions.isEmpty()) {
@@ -460,6 +451,14 @@ public class ItemBuilder implements Cloneable {
                 potionMeta.addCustomEffect(potionEffect, potions.get(potionEffect));
             }
             itemStack.setItemMeta(potionMeta);
+        }
+
+        if(itemsAdderData.getLeft().isPresent() && itemsAdderData.getRight().isPresent()) {
+            NBTItem nbtItem = new NBTItem(itemStack);
+            NBTCompound comp = nbtItem.getOrCreateCompound("itemsadder");
+            comp.setString("namespace", itemsAdderData.getLeft().get());
+            comp.setString("id", itemsAdderData.getRight().get());
+            nbtItem.applyNBT(itemStack);
         }
         return itemStack;
     }
