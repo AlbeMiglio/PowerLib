@@ -7,7 +7,7 @@
     <groupId>it.mycraft</groupId>
     <artifactId>powerlib</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.14-SNAPSHOT</version>
+    <version>${revision}</version>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -38,6 +38,7 @@
     </distributionManagement>
 
     <properties>
+        <revision>1.2.14-SNAPSHOT</revision>
         <java.version>9</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
