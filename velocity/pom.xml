@@ -6,11 +6,10 @@
 
     <parent>
         <artifactId>powerlib</artifactId>
-        <version>${revision}</version>
+        <version>1.2.15-SNAPSHOT</version>
         <groupId>it.mycraft</groupId>
     </parent>
     <artifactId>powerlib-velocity</artifactId>
-    <version>${revision}</version>
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -29,7 +28,7 @@
         <dependency>
             <groupId>it.mycraft</groupId>
             <artifactId>powerlib-common</artifactId>
-            <version>${project.version}</version>
+            <version>1.2.15-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.kyori</groupId>
@@ -41,7 +40,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.2.0-SNAPSHOT</version>
+            <version>3.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

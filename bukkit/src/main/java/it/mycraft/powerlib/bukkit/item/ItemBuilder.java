@@ -86,7 +86,7 @@ public class ItemBuilder implements Cloneable {
      * @return The ItemBuilder
      */
     public ItemBuilder setMaterial(String material) {
-        if (!material.startsWith("itemsadder:")) {
+        if (material.length() > 11 && !material.startsWith("itemsadder:")) {
             Optional<Material> optMaterial = Enums.getIfPresent(Material.class, material).toJavaUtil();
             if (optMaterial.isPresent())
                 this.material = optMaterial.get().toString();
