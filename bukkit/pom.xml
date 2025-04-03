@@ -28,15 +28,15 @@
         </repository>
         <repository>
             <id>paper</id>
-            <url>https://papermc.io/repo/repository/maven-releases/</url>
-        </repository>
-        <repository>
-            <id>jitpack-repo</id>
-            <url>https://jitpack.io</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>matteodev</id>
+            <url>https://maven.devs.beer/</url>
         </repository>
     </repositories>
 
@@ -60,15 +60,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.LoneDev6</groupId>
+            <groupId>dev.lone</groupId>
             <artifactId>api-itemsadder</artifactId>
-            <version>3.6.1</version>
+            <version>4.0.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.12.3</version>
+            <version>2.14.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
