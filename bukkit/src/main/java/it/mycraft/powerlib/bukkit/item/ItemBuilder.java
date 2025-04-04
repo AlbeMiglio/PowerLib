@@ -408,16 +408,19 @@ public class ItemBuilder implements Cloneable {
         }
         String name = this.name;
         List<String> lore = this.lore == null ? null : new ArrayList<>(this.lore);
+        ItemStack itemStack = null;
         if (material.startsWith("itemsadder:") && isUsingItemsAdder()) {
             String customItem = material.replace("itemsadder:", "");
             if (CustomStack.isInRegistry(customItem)) {
-                this.clone(CustomStack.getInstance(customItem).getItemStack());
+                itemStack = CustomStack.getInstance(customItem).getItemStack();
             } else material = "BARRIER";
         }
-        Material m = Material.getMaterial(material);
-        ItemStack itemStack = new ItemStack(m, amount, metadata);
+        else {
+            Material m = Material.getMaterial(material);
+            itemStack = new ItemStack(m, amount, metadata);
+        }
 
-        if (m.isAir())
+        if (itemStack.getType().isAir())
             return itemStack;
 
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -445,7 +448,7 @@ public class ItemBuilder implements Cloneable {
 
         itemStack.setItemMeta(itemMeta);
 
-        if (m == Material.POTION && !potions.isEmpty()) {
+        if (itemStack.getType() == Material.POTION && !potions.isEmpty()) {
             PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
             for (PotionEffect potionEffect : potions.keySet()) {
                 potionMeta.addCustomEffect(potionEffect, potions.get(potionEffect));

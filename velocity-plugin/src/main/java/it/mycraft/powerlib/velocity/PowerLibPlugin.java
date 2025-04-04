@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 
 @Getter
-@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.15-SNAPSHOT", authors = {"AlbeMiglio", "FranFrau"})
+@Plugin(id = "powerlib", name = "PowerLib", version = "1.2.16-SNAPSHOT", authors = {"AlbeMiglio", "FranFrau"})
 public class PowerLibPlugin {
 
     private ProxyServer proxy;
